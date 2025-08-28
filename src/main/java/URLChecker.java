@@ -15,12 +15,15 @@ public class URLChecker {
             if (dots > 3) {
                 result.addWarning("⚠️ Too many subdomains found (possible phishing)");
             }
-            String[] keywords = {"login", "secure", "verify", "update", "account"}; //common or extra words that appear in the urls
+            String[] keywords = {"login", "secure", "verify", "update", "account", "confirm", "payment", "banking", "transaction", "billing"}; //common or extra words that appear in the urls
 
             for (int i = 0; i < keywords.length; i++) {
                 if (host.contains(keywords[i])) {
                     result.addWarning("⚠️ Suspicious keyword detected: "+keywords[i]);
                 }
+            }
+            if (urlObj.getProtocol().equals("http")) {
+                result.addWarning("⚠️ Connection is not secure (uses http instead of https)");
             }
             
         }

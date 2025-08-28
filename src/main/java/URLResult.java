@@ -24,6 +24,18 @@ public class URLResult {
     }
 
     public void print() {
-        System.out.println("hip-hip");
+        System.out.println("Protocol: "+protocol);
+        System.out.println("Domain: "+domain);
+        System.out.println("Path: "+path);
+
+        if (warnings.isEmpty()) {
+            System.out.println("✅ No warnings detected");
+        }
+        else {
+            System.out.println("Warnings: ");
+            for (int i = 0; i < warnings.size(); i++) {
+                System.out.println(" - "+warnings.get(i));
+            }
+        }
     }
 }
