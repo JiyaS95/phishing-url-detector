@@ -17,7 +17,13 @@ public class App extends Application { //allows you to get the functionality for
         //window = stage
         //everything inside your window = scene
         primaryStage.setTitle("Phishing URL Checker");
-        Button button = new Button();
-        button.setText("Check!"); //makes and initializes the button
+        Button check = new Button();
+        check.setText("Check!"); //makes and initializes the button
+
+        StackPane layout = new StackPane(); //basic layout
+        layout.getChildren().add(check); //add button to the layout
+        Scene scene = new Scene(layout, 400, 300);
+        primaryStage.setScene(scene); //puts the scene in the layout
+        primaryStage.show(); //show it on screen
     }
 }
