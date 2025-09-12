@@ -1,3 +1,4 @@
+/*
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,3 +28,4 @@ public class App extends Application { //allows you to get the functionality for
         primaryStage.show(); //show it on screen
     }
 }
+*/
