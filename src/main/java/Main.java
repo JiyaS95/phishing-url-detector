@@ -5,6 +5,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
+/*
+Author: Jiya Shukla
+Date: September 11th, 2025
+Program Description: phishing url detector
+*/
 
 /*
 javac src/main/java/Main.java
@@ -22,17 +27,19 @@ public class Main {
         String url = scan.nextLine();
         System.out.println("You entered: "+url); 
 
+        //Populate whitelist and blacklist from files
         readWhitelist(whitelistSet);
         readBlacklist(blacklistSet);
 
+        //Analyze url and print risk assessment
         URLResult result = URLChecker.analyze(url, whitelistSet, blacklistSet);
         result.print();
 
-        scan.close();
+        scan.close(); //close scanner to avoid resource leak
     }
 
 
-    //Read the whitelist
+    //Read whitelist from file
     public static void readWhitelist(Set<String> whitelistSet) {
         try (BufferedReader br = new BufferedReader(new FileReader ("src/main/java/whitelist.txt"))) {
             String line;
@@ -45,7 +52,7 @@ public class Main {
         }
     }
 
-    //Read the blacklist
+    //Read blacklist from file
     public static void readBlacklist(Set<String> blacklistSet) {
         try (BufferedReader br = new BufferedReader(new FileReader ("src/main/java/blacklist.txt"))) {
             String line;

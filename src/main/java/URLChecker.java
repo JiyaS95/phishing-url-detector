@@ -11,7 +11,7 @@ public class URLChecker {
         }
         catch (MalformedURLException e) {
             System.out.println("❌ Invalid URL format");
-            return new URLResult(); //return empty result if URL is bad
+            return new URLResult(); //return empty result if URL is invalid
         }
 
         String host = urlObj.getHost();
@@ -23,7 +23,7 @@ public class URLChecker {
         
         //Call each method and store corresponding risk score
         riskScore = riskScore + checkBlacklist(result, host, blacklistSet);
-        if (riskScore == 100) {
+        if (riskScore == 100) { //exit and print immediately if domain is blacklisted
             result.setRiskScore(riskScore);
             return result;
         }
@@ -37,23 +37,24 @@ public class URLChecker {
         return result;
     }
 
+    //Check methods --> checks and adds warnings, returns corresponding risk contribution
+
     public static int checkBlacklist (URLResult result, String host, Set<String> blacklistSet) {
-        int riskScore = 0;
         Iterator<String> it = blacklistSet.iterator();
 
         while (it.hasNext()) {
             String badDomain = it.next();
             if (host.endsWith(badDomain)) {
                 result.addWarning("⚠️ Domain is blacklisted (HIGH RISK 🔴)");
-                return 100;
+                return 100; //immediate max risk
             }
         }
         
         
-        return riskScore;
+        return 0;
     }
+
     public static int checkWhitelist (URLResult result, String host, Set<String> whitelistSet) {
-        int riskScore = 0;
         Iterator<String> it = whitelistSet.iterator();
         while (it.hasNext()) {
             String safeDomain = it.next();
@@ -61,7 +62,7 @@ public class URLChecker {
                 result.addWarning("✅ Domain is whitelisted (LOW RISK 🟢)");
             }
         }
-        return riskScore;
+        return 0;
     }
 
     public static int checkSubdomains (URLResult result, String host) {
@@ -77,7 +78,6 @@ public class URLChecker {
 
     public static int checkKeywords (URLResult result, String host) {
         int riskScore = 0;
-        //Check for extra keywords
         String[] keywords = {"login", "secure", "verify", "update", "account", "confirm", "payment", "banking", "transaction", "billing"}; //common or extra words that appear in the urls
 
         int keywordRisk = 0;
@@ -88,7 +88,7 @@ public class URLChecker {
             }
         }
         if (keywordRisk > 30) {
-            riskScore = 30;
+            riskScore = 30; //cap the keyword risk at 30
         }
         else {
             riskScore = keywordRisk;
@@ -107,6 +107,7 @@ public class URLChecker {
     }
 
     public static int checkDigitsAndLength (URLResult result, String url) {
+        //Checks for long URLs and URLs containing too many digits
         int riskScore = 0;
         if (url.length() > 100) {
             result.addWarning("⚠️ URL is very long (possible phishing)");

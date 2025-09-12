@@ -24,6 +24,7 @@ public class URLResult {
         this.riskScore = riskScore;
     }
 
+    //Add warning message to the list
     public void addWarning (String warning) {
         warnings.add(warning);
     }
@@ -41,6 +42,8 @@ public class URLResult {
             for (int i = 0; i < warnings.size(); i++) {
                 System.out.println(" - "+warnings.get(i));
             }
+
+            //Show total risk score and the ranking
             System.out.println("Risk Score: "+riskScore+"/100");
             if (riskScore > 0 && riskScore <= 20) {
                 System.out.print("--> LOW RISK 🟢");
