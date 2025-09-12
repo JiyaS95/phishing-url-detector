@@ -1,5 +1,9 @@
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+
 
 public class URLChecker {
     public static URLResult analyze(String url, Set<String>whitelistSet, Set<String>blacklistSet) {
@@ -45,7 +49,7 @@ public class URLChecker {
         while (it.hasNext()) {
             String badDomain = it.next();
             if (host.endsWith(badDomain)) {
-                result.addWarning("⚠️ Domain is blacklisted (HIGH RISK 🔴)");
+                result.addWarning("⚠️ Domain is blacklisted (HIGH RISK!!)");
                 return 100; //immediate max risk
             }
         }

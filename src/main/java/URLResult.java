@@ -44,15 +44,15 @@ public class URLResult {
             }
 
             //Show total risk score and the ranking
-            System.out.println("Risk Score: "+riskScore+"/100");
+            System.out.print("Risk Score: "+riskScore+"/100 ");
             if (riskScore > 0 && riskScore <= 20) {
-                System.out.print("--> LOW RISK 🟢");
+                System.out.println("--> LOW RISK 🟢");
             }
             else if (riskScore > 20 && riskScore <= 50) {
-                System.out.print("--> MEDIUM RISK 🟡");
+                System.out.println("--> MEDIUM RISK 🟡");
             }
             else if (riskScore > 50) {
-                System.out.print("--> HIGH RISK 🔴");
+                System.out.println("--> HIGH RISK 🔴");
             }
         }
     }

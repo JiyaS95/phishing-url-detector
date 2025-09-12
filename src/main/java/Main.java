@@ -8,11 +8,11 @@ import java.util.Iterator;
 /*
 Author: Jiya Shukla
 Date: September 11th, 2025
-Program Description: phishing url detector
+Program Description: Detects Phishing URLs
 */
 
 /*
-javac src/main/java/Main.java
+javac src/main/java/*.java
 java -cp src/main/java Main
 */
 public class Main {
@@ -25,7 +25,7 @@ public class Main {
         System.out.println("Enter a URL to check:");
         System.out.print(">>>> ");
         String url = scan.nextLine();
-        System.out.println("You entered: "+url); 
+        System.out.println("\nYou entered: "+url); 
 
         //Populate whitelist and blacklist from files
         readWhitelist(whitelistSet);
