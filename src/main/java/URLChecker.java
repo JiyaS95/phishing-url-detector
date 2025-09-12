@@ -2,7 +2,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 
 public class URLChecker {
-    public static URLResult analyze(String url) {
+    public static URLResult analyze(String url, Set<String>whitelistSet, Set<String>blacklistSet) {
         URLResult result = new URLResult();
         try {
             URL urlObj = new URL(url);
@@ -13,8 +13,30 @@ public class URLChecker {
             
             int riskScore = 0; //Scoring system --> used to show risk level (low/medium/high)
 
+            //Check for blacklist/whitelist
+            Iterator<String> it = blacklistSet.iterator();
 
-            //checking for extra dots
+            while (it.hasNext()) {
+                String badDomain = it.next();
+                if (host.endsWith(badDomain)) {
+                    result.addWarning("⚠️ Domain is blacklisted (HIGH RISK 🔴)");
+                    riskScore = 100;
+                    result.setRiskScore(riskScore);
+                    return result;
+                }
+            }
+            
+
+            it = whitelistSet.iterator();
+            while (it.hasNext()) {
+                String safeDomain = it.next();
+                if (host.endsWith(safeDomain)) {
+                    result.addWarning("✅ Domain is whitelisted (LOW RISK 🟢)");
+                }
+            }
+
+
+            //Check for extra subdomains
             int dots = host.split("\\.").length;
 
             if (dots > 3) {
@@ -68,6 +90,12 @@ public class URLChecker {
                 result.addWarning("⚠️ Domain is an IP Address (possible phishing)");
                 riskScore = riskScore + 40;
             }
+
+            
+
+
+
+
         }
         catch (MalformedURLException e) {
             System.out.println("❌ Invalid URL format");
