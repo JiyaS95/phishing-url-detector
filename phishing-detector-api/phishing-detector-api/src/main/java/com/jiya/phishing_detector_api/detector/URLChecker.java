@@ -15,13 +15,14 @@ public class URLChecker {
             
         }
         catch (MalformedURLException e) {
-            System.out.println("❌ Invalid URL format");
-            return new URLResult(); //return empty result if URL is invalid
+            result = new URLResult();
+            result.setError("❌ Invalid URL format");
+            return result; //return empty result if URL is invalid
         }
 
         String host = urlObj.getHost();
         result.setProtocol(urlObj.getProtocol()); //get the protocol from the URL and store it in the URLResult object
-        result.setHost(urlObj.getHost());
+        result.setDomain(urlObj.getHost());
         result.setPath(urlObj.getPath());
             
         int riskScore = 0; //Scoring system --> used to show risk level (low/medium/high)

@@ -63,6 +63,11 @@
                 button:hover {
                         background-color: #0d47a1;
                 }
+                .error {
+                        color:#ff0e0e;
+                        font-weight: 600;
+                        margin-top: 10px;
+                }
         </style>
 </head>
 <script>
@@ -74,8 +79,15 @@
                 }
                 fetch("/check?url=" + url).then(function(response) { //send a request to my java backend at /check and give it the URL
                         return response.json(); //take response and turn it into JS object (since backend replies in JSON)
-                }).then(function(data) { //takes data from Java and writes it into result
+
+                })
+                .then(function(data) { //takes data from Java and writes it into result
                         //Show result on the page
+                        if (data.error){
+                                document.getElementById("result").innerHTML = 
+                                "<div class='error'>" + data.error + "</div>";
+                                return;
+                        }
                         document.getElementById("result").innerHTML = 
                                 "Protocol: " + data.protocol + "<br>" + "Domain: " + data.domain + "<br>" + "Risk Score: " + data.riskScore + "<br>" + "Warnings: " + data.warnings;
                 });
@@ -90,7 +102,7 @@
                 <div class="box">
                         <input type="text" id= "urlInput" placeholder="Enter URL here"> 
                         <br>
-                        <button oneclick="checkURL()">Check URL</button>
+                        <button onclick="checkURL()">Check URL</button>
                         <div id= "result" style="margin-top: 20px;"></div>
                 </div>
         </div>
@@ -98,4 +110,3 @@
 </body>
 
 </html>
->

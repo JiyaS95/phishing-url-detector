@@ -9,6 +9,7 @@ public class URLResult {
     private String path;
     private List<String> warnings = new ArrayList<>();
     private int riskScore;
+    private String error;
 
     public void setProtocol (String protocol) {
         this.protocol = protocol;
@@ -17,10 +18,10 @@ public class URLResult {
         return protocol;
     }
 
-    public void setHost (String domain) {
+    public void setDomain (String domain) {
         this.domain = domain;
     }
-    public String getHost() {
+    public String getDomain() {
         return domain;
     }
 
@@ -37,6 +38,13 @@ public class URLResult {
     }
     public int getRiskScore() {
         return riskScore;
+    }
+
+    public void setError(String error){
+        this.error = error;
+    }
+    public String getError() {
+        return error;
     }
 
     public List<String> getWarnings() {
