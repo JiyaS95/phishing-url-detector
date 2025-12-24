@@ -74,7 +74,8 @@
         function checkURL() { //only runs when button is clicked
                 var url = document.getElementById("urlInput").value; //take the text user entered and store it in url
                 if (url == "") {
-                        alert("Please enter a URL"); //got no input from user so we return an error
+                        document.getElementById("result").innerHTML = "<div class='error'>Please enter a URL</div>"; //got no input from user so we return an error
+                         
                         return;
                 }
                 fetch("/check?url=" + url).then(function(response) { //send a request to my java backend at /check and give it the URL
@@ -88,8 +89,25 @@
                                 "<div class='error'>" + data.error + "</div>";
                                 return;
                         }
-                        document.getElementById("result").innerHTML = 
-                                "Protocol: " + data.protocol + "<br>" + "Domain: " + data.domain + "<br>" + "Risk Score: " + data.riskScore + "<br>" + "Warnings: " + data.warnings;
+                        var html = "";
+                        html = html + "<p><strong>Protocol:</strong> " + data.protocol + "</p>"; //p = paragraph, strong = bold
+                        html = html + "<p><strong>Domain:</strong> " + data.domain + "</p>";
+                        html = html + "<p><strong>Path:</strong> " + data.path + "</p>";
+                        html = html + "<p><strong>Risk Score:</strong> " + data.riskScore + "</p>";
+                        html = html + "<p><strong>Risk Level:</strong> " + data.riskLevel + "</p>";
+
+                        if (data.warnings.length > 0) {
+                                html = html + "<p><strong>Warnings:</strong></p><ul>"; //ul = list of bullet points
+                                for (var i = 0; i < data.warnings.length; i++) {
+                                        html = html + "<li>" + data.warnings[i] + "</li>";
+                                }
+                                html = html + "</ul>";
+                        }
+                        else {
+                                html = html + "<p>✅ No warnings detected</p>";
+                        }
+                        document.getElementById("result").innerHTML = html;
+                
                 });
                 
         }

@@ -10,6 +10,7 @@ public class URLResult {
     private List<String> warnings = new ArrayList<>();
     private int riskScore;
     private String error;
+    private String riskLevel;
 
     public void setProtocol (String protocol) {
         this.protocol = protocol;
@@ -47,6 +48,13 @@ public class URLResult {
         return error;
     }
 
+    public void setRiskLevel(String riskLevel) {
+        this.riskLevel = riskLevel;
+    }
+    public String getRiskLevel() {
+        return riskLevel;
+    }
+
     public List<String> getWarnings() {
         return warnings;
     }
@@ -55,6 +63,7 @@ public class URLResult {
     public void addWarning (String warning) {
         warnings.add(warning);
     }
+    
 
     
 }

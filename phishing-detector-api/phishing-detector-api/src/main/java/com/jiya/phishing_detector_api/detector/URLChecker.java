@@ -2,7 +2,6 @@ package com.jiya.phishing_detector_api.detector;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.Iterator;
 
 
@@ -31,6 +30,7 @@ public class URLChecker {
         riskScore = riskScore + checkBlacklist(result, host, blacklistSet);
         if (riskScore == 100) { //exit and print immediately if domain is blacklisted
             result.setRiskScore(riskScore);
+            result.setRiskLevel("HIGH 🔴");
             return result;
         }
         riskScore = riskScore + checkWhitelist(result, host, whitelistSet);
@@ -40,6 +40,16 @@ public class URLChecker {
         riskScore = riskScore + checkDigitsAndLength(result, url);
         riskScore = riskScore + checkIPAddress(result, host);
         result.setRiskScore(riskScore);
+
+        if (riskScore >= 0 && riskScore <= 20) {
+            result.setRiskLevel("LOW 🟢");
+        }
+        else if (riskScore > 20  && riskScore <= 50) {
+            result.setRiskLevel("MEDIUM 🟡");
+        }
+        else if (riskScore > 50) {
+            result.setRiskLevel("HIGH 🔴");
+        }
         return result;
     }
 
