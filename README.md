@@ -1,28 +1,36 @@
 # Phishing URL Detector
-A Java-based phishing URL detector that analyzes links for suspicious patterns and warns users about potential risks.
+A web-based phishing URL detector built in Java that analyzes URLs for suspicious patterns and shows users a clear risk assessment. This project started as a simple URL checker and evolved into a full web app with a clean UI and real-time analysis.
 
 ## Features
-- Check URLs against whitelist and blacklist
-- Detect suspicious keywords in URLs
-- Warn if URL uses insecure http
+- Analyze URLs for phishing indicators
+- Detect suspicious keywords (login, secure, verify, etc.)
+- Warn when a URL uses insecure **HTTP**
 - Flag long URLs and excessive digits
 - Detect too many subdomains
-- Identify URLs that use IP addresses
+- Identify IP-based URLs
+- Check against whitelist and blacklist
 - Calculate overall risk score (Low, Medium, High)
+- Display results directly in the browser
 
-## Compile
-javac src/main/java/*.java
+## Tech Stack
+- Java 17
+- Spring Boot
+- HTML/CSS/JavaScript
+- Maven
 
 ## Run
-java -cp src/main/java Main
+Make sure you have **Java 17+** installed.
+- ./mvnw spring-boot:run
 
-## Notes
-- URLs in the blacklist result in immediate high risk
-- Risk Score Ranges
-- --> 0-20: Low Risk
-- --> 21-50: Medium Risk
-- --> 51-100: High Risk
+## Home Page
+<img width="1915" height="675" alt="home-page" src="https://github.com/user-attachments/assets/b3339233-c3ab-45fe-8f01-8d534c5d8dd0" />
 
-## Example
-<img width="591" height="280" alt="image" src="https://github.com/user-attachments/assets/4840bfba-0280-4b5c-809f-0abeaeded2f2" />
+## Valid URL Result
+<img width="1916" height="930" alt="valid-url" src="https://github.com/user-attachments/assets/9ec987b4-896a-46f7-a78c-13013863ecce" />
+
+## Invalid URL Result
+<img width="1918" height="825" alt="invalid-url" src="https://github.com/user-attachments/assets/c798dbe4-406c-4761-a9c4-89f43f5a9626" />
+
+## Medium Risk Example
+<img width="1916" height="971" alt="medium-risk" src="https://github.com/user-attachments/assets/7f03d22c-a8fc-403c-becf-5eacc0d20cd8" />
 
