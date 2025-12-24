@@ -56,31 +56,5 @@ public class URLResult {
         warnings.add(warning);
     }
 
-    public void print() {
-        System.out.println("Protocol: "+protocol);
-        System.out.println("Domain: "+domain);
-        System.out.println("Path: "+path);
-
-        if (warnings.isEmpty()) {
-            System.out.println("✅ No warnings detected");
-        }
-        else {
-            System.out.println("Warnings: ");
-            for (int i = 0; i < warnings.size(); i++) {
-                System.out.println(" - "+warnings.get(i));
-            }
-
-            //Show total risk score and the ranking
-            System.out.print("Risk Score: "+riskScore+"/100 ");
-            if (riskScore > 0 && riskScore <= 20) {
-                System.out.println("--> LOW RISK 🟢");
-            }
-            else if (riskScore > 20 && riskScore <= 50) {
-                System.out.println("--> MEDIUM RISK 🟡");
-            }
-            else if (riskScore > 50) {
-                System.out.println("--> HIGH RISK 🔴");
-            }
-        }
-    }
+    
 }
