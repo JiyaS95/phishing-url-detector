@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phishing Detector</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🛡️</div>
+      <h1>Phishing Detector</h1>
+      <p class="subtitle">URL & Email Risk Analyzer</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="url">URL Check</button>
+      <button class="tab" data-tab="email">Email Check</button>
+    </div>
+
+    <div id="tab-url" class="tab-content active">
+      <div class="input-group">
+        <input type="text" id="urlInput" placeholder="https://example.com" />
+        <button id="checkUrl">Analyze</button>
+      </div>
+      <div id="urlResult" class="result hidden"></div>
+    </div>
+
+    <div id="tab-email" class="tab-content">
+      <div class="input-group column">
+        <textarea id="emailInput" placeholder="Paste email content here..."></textarea>
+        <button id="checkEmail">Analyze Email</button>
+      </div>
+      <div id="emailResult" class="result hidden"></div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
