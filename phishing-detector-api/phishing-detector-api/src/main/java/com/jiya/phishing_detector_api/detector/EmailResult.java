@@ -9,6 +9,7 @@ public class EmailResult {
     private String riskLevel;
     private List<String> suspiciousUrls = new ArrayList<>();
     private String error;
+    private String aiAnalysis;
 
     public void addWarning(String warning) { warnings.add(warning); }
     public List<String> getWarnings() { return warnings; }
@@ -20,4 +21,6 @@ public class EmailResult {
     public List<String> getSuspiciousUrls() { return suspiciousUrls; }
     public void setError(String error) { this.error = error; }
     public String getError() { return error; }
+    public void setAiAnalysis(String aiAnalysis) { this.aiAnalysis = aiAnalysis; }
+    public String getAiAnalysis() { return aiAnalysis; }
 }

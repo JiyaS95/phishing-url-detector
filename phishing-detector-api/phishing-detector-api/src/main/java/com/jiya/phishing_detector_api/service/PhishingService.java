@@ -12,11 +12,13 @@ import java.util.HashSet;
 public class PhishingService {
 
     private final SafeBrowsingService safeBrowsingService;
+    private final GeminiService geminiService;
     private Set<String> whitelist = new HashSet<>();
     private Set<String> blacklist = new HashSet<>();
 
-    public PhishingService(SafeBrowsingService safeBrowsingService) {
+    public PhishingService(SafeBrowsingService safeBrowsingService, GeminiService geminiService) {
         this.safeBrowsingService = safeBrowsingService;
+        this.geminiService = geminiService;
         whitelist.add("google.com");
         whitelist.add("github.com");
         whitelist.add("walmart.com");
@@ -36,6 +38,14 @@ public class PhishingService {
     }
 
     public EmailResult analyzeEmail(String emailBody) {
-        return EmailChecker.analyze(emailBody, safeBrowsingService);
+        EmailResult result = EmailChecker.analyze(emailBody, safeBrowsingService);
+
+        // Add Gemini AI analysis
+        String aiAnalysis = geminiService.analyzeEmail(emailBody);
+        if (aiAnalysis != null) {
+            result.setAiAnalysis(aiAnalysis);
+        }
+
+        return result;
     }
 }
