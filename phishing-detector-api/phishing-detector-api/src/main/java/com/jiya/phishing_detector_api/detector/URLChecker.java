@@ -41,13 +41,13 @@ public class URLChecker {
         riskScore = riskScore + checkIPAddress(result, host);
         result.setRiskScore(riskScore);
 
-        if (riskScore >= 0 && riskScore <= 20) {
+        if (riskScore >= 0 && riskScore <= 10) {
             result.setRiskLevel("LOW 🟢");
         }
-        else if (riskScore > 20  && riskScore <= 50) {
+        else if (riskScore > 10 && riskScore <= 35) {
             result.setRiskLevel("MEDIUM 🟡");
         }
-        else if (riskScore > 50) {
+        else if (riskScore > 35) {
             result.setRiskLevel("HIGH 🔴");
         }
         return result;
@@ -87,7 +87,7 @@ public class URLChecker {
 
         if (dots > 3) {
             result.addWarning("⚠️ Too many subdomains found (possible phishing)");
-            riskScore = 15;
+            riskScore = 25;
         }
         return riskScore;
     }
@@ -100,11 +100,11 @@ public class URLChecker {
         for (int i = 0; i < keywords.length; i++) {
             if (host.contains(keywords[i])) {
                 result.addWarning("⚠️ Suspicious keyword detected: "+keywords[i]);
-                keywordRisk = keywordRisk + 15;
+                keywordRisk = keywordRisk + 20;
             }
         }
-        if (keywordRisk > 30) {
-            riskScore = 30; //cap the keyword risk at 30
+        if (keywordRisk > 40) {
+            riskScore = 40; //cap the keyword risk at 30
         }
         else {
             riskScore = keywordRisk;
@@ -125,7 +125,7 @@ public class URLChecker {
     public static int checkDigitsAndLength (URLResult result, String url) {
         //Checks for long URLs and URLs containing too many digits
         int riskScore = 0;
-        if (url.length() > 100) {
+        if (url.length() > 75) {
             result.addWarning("⚠️ URL is very long (possible phishing)");
             riskScore = 10;
         }
@@ -137,7 +137,7 @@ public class URLChecker {
             }
         }
         double digitPercent = ((double) digitCount / url.length()) * 100;
-        if (digitPercent >= 30) {
+        if (digitPercent >= 20) {
             result.addWarning("⚠️ Too many digits detected (possible phishing)");
             riskScore = 20;
         }
