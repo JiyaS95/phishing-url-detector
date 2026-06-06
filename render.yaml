@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: phishing-url-detector
+    runtime: java
+    rootDir: phishing-detector-api/phishing-detector-api
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/phishing-detector-api-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: SAFEBROWSING_API_KEY
+        sync: false
