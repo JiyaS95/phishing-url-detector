@@ -1,4 +1,4 @@
-const API = 'https://supreme-space-spork-x5p96v7gjr7rcvq5v-8080.app.github.dev';
+const API = 'https://phishing-url-detector-je19.onrender.com';
 
 // Tab switching
 document.querySelectorAll('.tab').forEach(tab => {

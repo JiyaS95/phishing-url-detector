@@ -1,6 +1,6 @@
 // Runs on Gmail - detects open emails and shows a phishing warning banner
 
-const API = 'https://supreme-space-spork-x5p96v7gjr7rcvq5v-8080.app.github.dev';
+const API = 'https://phishing-url-detector-je19.onrender.com';
 
 let lastCheckedBody = '';
 
