@@ -1,130 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <style>
-                h1 {
-                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                        color: #0d47a1;
-                        letter-spacing: 2px;
-                        font-weight: 700;
-                }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detector</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-                body {
-                        margin: 0;
-                        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-                        background: linear-gradient(135deg, #e3f2fd, #ffffff);
-                }
-
-                .container {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        margin-top: 120px;
-                }
-
-                .box {
-                        background: white;
-                        padding: 40px 50px;
-                        border-radius: 12px;
-                        border: 1px solid #e3f2fd;
-                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(25, 118, 210, 0.05);
-                        text-align: center;
-                }
-
-                input {
-                        width: 420px;
-                        padding: 14px;
-                        font-size: 16px;
-                        border: 2px solid #bbb;
-                        border-radius: 8px;
-                        outline: none;
-                }
-
-                input:focus {
-                        border-color: #1976d2;
-                        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
-                }
-
-                button {
-                        margin-top: 20px;
-                        padding: 12px 30px;
-                        font-size: 16px;
-                        background-color: #1976d2;
-                        color: white;
-                        border: none;
-                        border-radius: 8px;
-                        cursor: pointer;
-                }
-
-                button:hover {
-                        background-color: #0d47a1;
-                }
-                .error {
-                        color:#ff0e0e;
-                        font-weight: 600;
-                        margin-top: 10px;
-                }
-        </style>
-</head>
-<script>
-        function checkURL() { //only runs when button is clicked
-                var url = document.getElementById("urlInput").value; //take the text user entered and store it in url
-                if (url == "") {
-                        document.getElementById("result").innerHTML = "<div class='error'>Please enter a URL</div>"; //got no input from user so we return an error
-                         
-                        return;
-                }
-                fetch("/check?url=" + url).then(function(response) { //send a request to my java backend at /check and give it the URL
-                        return response.json(); //take response and turn it into JS object (since backend replies in JSON)
-
-                })
-                .then(function(data) { //takes data from Java and writes it into result
-                        //Show result on the page
-                        if (data.error){
-                                document.getElementById("result").innerHTML = 
-                                "<div class='error'>" + data.error + "</div>";
-                                return;
-                        }
-                        var html = "";
-                        html = html + "<p><strong>Protocol:</strong> " + data.protocol + "</p>"; //p = paragraph, strong = bold
-                        html = html + "<p><strong>Domain:</strong> " + data.domain + "</p>";
-                        html = html + "<p><strong>Path:</strong> " + data.path + "</p>";
-                        html = html + "<p><strong>Risk Score:</strong> " + data.riskScore + "</p>";
-                        html = html + "<p><strong>Risk Level:</strong> " + data.riskLevel + "</p>";
-
-                        if (data.warnings.length > 0) {
-                                html = html + "<p><strong>Warnings:</strong></p><ul>"; //ul = list of bullet points
-                                for (var i = 0; i < data.warnings.length; i++) {
-                                        html = html + "<li>" + data.warnings[i] + "</li>";
-                                }
-                                html = html + "</ul>";
-                        }
-                        else {
-                                html = html + "<p>✅ No warnings detected</p>";
-                        }
-                        document.getElementById("result").innerHTML = html;
-                
-                });
-                
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #0a0a14;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #e0e0e0;
         }
 
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo { font-size: 56px; margin-bottom: 12px; }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #666;
+        }
+
+        .box {
+            background: #13131f;
+            border: 1px solid #1e1e32;
+            border-radius: 16px;
+            padding: 40px;
+            width: 560px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        input {
+            flex: 1;
+            padding: 14px 18px;
+            font-size: 14px;
+            border: 1px solid #2a2a40;
+            border-radius: 10px;
+            background: #0d0d1a;
+            color: #fff;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus { border-color: #4f46e5; }
+
+        input::placeholder { color: #444; }
+
+        button {
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover { background: #4338ca; }
+
+        .error {
+            color: #f87171;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+            background: #2a0a0a;
+            border-radius: 8px;
+            border-left: 3px solid #f87171;
+        }
+
+        .result-card {
+            background: #0d0d1a;
+            border: 1px solid #1e1e32;
+            border-radius: 12px;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-LOW    { background: #14532d; color: #4ade80; }
+        .risk-MEDIUM { background: #713f12; color: #fbbf24; }
+        .risk-HIGH   { background: #7f1d1d; color: #f87171; }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .meta-item {
+            background: #13131f;
+            border-radius: 8px;
+            padding: 10px 14px;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-size: 13px;
+            color: #ccc;
+            word-break: break-all;
+        }
+
+        .score-bar-wrap {
+            margin-bottom: 16px;
+        }
+
+        .score-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .score-bar {
+            height: 6px;
+            background: #1e1e32;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        .warnings-title {
+            font-size: 12px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .warnings-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .warnings-list li {
+            font-size: 13px;
+            padding: 8px 12px;
+            background: #13131f;
+            border-radius: 8px;
+            border-left: 3px solid #4f46e5;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        .no-warnings {
+            font-size: 14px;
+            color: #4ade80;
+            text-align: center;
+            padding: 12px;
+            background: #0a2a0a;
+            border-radius: 8px;
+        }
+
+        .footer {
+            margin-top: 32px;
+            font-size: 12px;
+            color: #333;
+        }
+    </style>
+</head>
+<script>
+    function checkURL() {
+        var url = document.getElementById("urlInput").value;
+        if (url == "") {
+            document.getElementById("result").innerHTML = "<div class='error'>Please enter a URL</div>";
+            return;
+        }
+        document.getElementById("result").innerHTML = "<div style='color:#666;font-size:14px;text-align:center;padding:20px'>Analyzing...</div>";
+
+        fetch("/check?url=" + encodeURIComponent(url)).then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.error) {
+                document.getElementById("result").innerHTML = "<div class='error'>" + data.error + "</div>";
+                return;
+            }
+
+            var level = "LOW";
+            if (data.riskLevel && data.riskLevel.includes("HIGH")) level = "HIGH";
+            else if (data.riskLevel && data.riskLevel.includes("MEDIUM")) level = "MEDIUM";
+
+            var barColor = level === "HIGH" ? "#f87171" : level === "MEDIUM" ? "#fbbf24" : "#4ade80";
+
+            var html = "<div class='result-card'>";
+            html += "<span class='risk-badge risk-" + level + "'>" + (data.riskLevel || "LOW") + "</span>";
+
+            html += "<div class='score-bar-wrap'>";
+            html += "<div class='score-label'><span>Risk Score</span><span>" + data.riskScore + "/100</span></div>";
+            html += "<div class='score-bar'><div class='score-fill' style='width:" + data.riskScore + "%;background:" + barColor + "'></div></div>";
+            html += "</div>";
+
+            html += "<div class='meta-grid'>";
+            html += "<div class='meta-item'><div class='meta-label'>Protocol</div><div class='meta-value'>" + (data.protocol || "-") + "</div></div>";
+            html += "<div class='meta-item'><div class='meta-label'>Domain</div><div class='meta-value'>" + (data.domain || "-") + "</div></div>";
+            if (data.path) html += "<div class='meta-item' style='grid-column:span 2'><div class='meta-label'>Path</div><div class='meta-value'>" + data.path + "</div></div>";
+            html += "</div>";
+
+            if (data.warnings && data.warnings.length > 0) {
+                html += "<div class='warnings-title'>Warnings</div>";
+                html += "<ul class='warnings-list'>";
+                for (var i = 0; i < data.warnings.length; i++) {
+                    html += "<li>" + data.warnings[i] + "</li>";
+                }
+                html += "</ul>";
+            } else {
+                html += "<div class='no-warnings'>✅ No threats detected</div>";
+            }
+
+            html += "</div>";
+            document.getElementById("result").innerHTML = html;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("urlInput").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") checkURL();
+        });
+    });
 </script>
 <body>
-        <h1 style="text-align:center">🔒 PHISHING DETECTOR 🔒</h1>
-        <p style="text-align:center; font-size:large">Enter a URL below to check if it's a phishing attempt.</p>
-        <div class="container">
-                <div class="box">
-                        <input type="text" id= "urlInput" placeholder="Enter URL here"> 
-                        <br>
-                        <button onclick="checkURL()">Check URL</button>
-                        <div id= "result" style="margin-top: 20px;"></div>
-                </div>
+    <div class="header">
+        <div class="logo">🛡️</div>
+        <h1>Phishing Detector</h1>
+        <p class="subtitle">Check any URL for phishing indicators and risk assessment</p>
+    </div>
+
+    <div class="box">
+        <div class="input-row">
+            <input type="text" id="urlInput" placeholder="https://example.com">
+            <button onclick="checkURL()">Analyze</button>
         </div>
+        <div id="result"></div>
+    </div>
 
+    <p class="footer">Powered by Google Safe Browsing & URLhaus</p>
 </body>
-
 </html>
