@@ -30,7 +30,7 @@ public class GeminiService {
             );
 
             Map response = webClient.post()
-                .uri("/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey)
+                .uri("/v1beta/models/gemini-2.5-flash-lite:generateContent?key=" + apiKey)
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(Map.class)
