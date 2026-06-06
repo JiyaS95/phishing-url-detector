@@ -1,4 +1,4 @@
-const API = 'http://localhost:8080';
+const API = 'https://supreme-space-spork-x5p96v7gjr7rcvq5v-8080.app.github.dev';
 
 // Tab switching
 document.querySelectorAll('.tab').forEach(tab => {

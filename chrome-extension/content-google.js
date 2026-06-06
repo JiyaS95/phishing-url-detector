@@ -1,7 +1,7 @@
 // Runs on Google Search results pages
 // Adds risk badges next to each result and hides HIGH risk ones
 
-const API = 'http://localhost:8080';
+const API = 'https://supreme-space-spork-x5p96v7gjr7rcvq5v-8080.app.github.dev';
 
 function getBadgeHTML(level, score) {
   const colors = {
