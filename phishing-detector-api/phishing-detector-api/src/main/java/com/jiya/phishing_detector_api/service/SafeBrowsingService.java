@@ -12,9 +12,15 @@ public class SafeBrowsingService {
     @Value("${safebrowsing.api.key}")
     private String apiKey;
 
-    private final WebClient webClient = WebClient.create("https://safebrowsing.googleapis.com");
+    private final WebClient googleClient = WebClient.create("https://safebrowsing.googleapis.com");
+    private final WebClient urlhausClient = WebClient.create("https://urlhaus-api.abuse.ch");
 
+    // Returns true if either Google or URLhaus flags the URL as dangerous
     public boolean isMalicious(String url) {
+        return checkGoogleSafeBrowsing(url) || checkURLhaus(url);
+    }
+
+    private boolean checkGoogleSafeBrowsing(String url) {
         try {
             Map<String, Object> requestBody = Map.of(
                 "client", Map.of("clientId", "phishing-detector", "clientVersion", "1.0.0"),
@@ -25,7 +31,7 @@ public class SafeBrowsingService {
                     "threatEntries", List.of(Map.of("url", url))
                 )
             );
-            Map response = webClient.post()
+            Map response = googleClient.post()
                 .uri("/v4/threatMatches:find?key=" + apiKey)
                 .bodyValue(requestBody)
                 .retrieve()
@@ -33,7 +39,29 @@ public class SafeBrowsingService {
                 .block();
             return response != null && response.containsKey("matches");
         } catch (Exception e) {
-            System.out.println("Safe Browsing API error: " + e.getMessage());
+            System.out.println("Google Safe Browsing error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean checkURLhaus(String url) {
+        try {
+            // URLhaus lookup API - free, no key needed
+            String formBody = "url=" + java.net.URLEncoder.encode(url, "UTF-8");
+            Map response = urlhausClient.post()
+                .uri("/v1/url/")
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .bodyValue(formBody)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+
+            if (response == null) return false;
+            String queryStatus = (String) response.get("query_status");
+            // "is_available" means it's a known malicious URL in their database
+            return "is_available".equals(queryStatus);
+        } catch (Exception e) {
+            System.out.println("URLhaus error: " + e.getMessage());
             return false;
         }
     }
