@@ -2,9 +2,50 @@ const API = 'https://phishing-url-detector-je19.onrender.com';
 
 let bannerVisible = false;
 
+function getPlatform() {
+  const host = window.location.hostname;
+  if (host.includes('mail.google.com')) return 'gmail';
+  if (host.includes('outlook.live.com') || host.includes('outlook.office')) return 'outlook';
+  if (host.includes('mail.yahoo.com')) return 'yahoo';
+  return 'unknown';
+}
+
 function getEmailBody() {
-  const bodyEl = document.querySelector('.a3s.aiL, .a3s');
-  return bodyEl ? bodyEl.innerText : '';
+  const platform = getPlatform();
+
+  if (platform === 'gmail') {
+    const el = document.querySelector('.a3s.aiL, .a3s');
+    return el ? el.innerText : '';
+  }
+
+  if (platform === 'outlook') {
+    const selectors = [
+      '[aria-label="Message body"]',
+      '.ReadingPaneContent',
+      '[role="document"]',
+      '.scrollable-region-content'
+    ];
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      if (el && el.innerText.trim().length > 20) return el.innerText;
+    }
+    return '';
+  }
+
+  if (platform === 'yahoo') {
+    const selectors = [
+      '.msg-body',
+      '[data-test-id="message-view-body"]',
+      '.ReadableMessageBody'
+    ];
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      if (el && el.innerText.trim().length > 20) return el.innerText;
+    }
+    return '';
+  }
+
+  return '';
 }
 
 function removeBanner() {
@@ -118,6 +159,7 @@ async function scanEmail() {
   } catch (e) {
     alert('Could not reach Phishing Detector backend.');
   } finally {
+    const btn = document.getElementById('phish-toggle-btn');
     if (btn) btn.disabled = false;
   }
 }
@@ -149,10 +191,8 @@ function createToggleButton() {
   document.body.appendChild(btn);
 }
 
-// Create button when Gmail loads
 createToggleButton();
 
-// Recreate button if Gmail navigates (SPA)
 const observer = new MutationObserver(() => {
   createToggleButton();
   if (bannerVisible) {
