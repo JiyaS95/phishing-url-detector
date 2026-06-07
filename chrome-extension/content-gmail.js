@@ -109,12 +109,20 @@ function showBanner(data) {
     `<li style="margin-bottom:5px;font-size:12px;color:#ccc;list-style:none;">${w}</li>`
   ).join('');
 
+  const aiBlock = data.aiAnalysis
+    ? `<div style="margin-top:10px;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;border-left:3px solid #4f46e5;">
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">🤖 AI Analysis</div>
+        <div style="font-size:12px;color:#ccc;line-height:1.5;">${data.aiAnalysis}</div>
+       </div>`
+    : '';
+
   banner.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
       <span style="color:${c.text};font-weight:700;font-size:14px;">🛡️ ${level} RISK — ${data.riskScore}/100</span>
       <span id="phish-close" style="cursor:pointer;color:#888;font-size:18px;margin-left:12px;line-height:1;">✕</span>
     </div>
     ${warnings ? '<ul style="padding:0;margin:0;">' + warnings + '</ul>' : ''}
+    ${aiBlock}
   `;
 
   document.body.appendChild(banner);

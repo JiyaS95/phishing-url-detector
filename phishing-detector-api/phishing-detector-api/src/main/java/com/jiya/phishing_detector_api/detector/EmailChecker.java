@@ -132,7 +132,7 @@ public class EmailChecker {
     private static int checkFinancialFraud(EmailResult result, String body) {
         String lower = body.toLowerCase();
         String[] fraudWords = {
-            "e-transfer", "etransfer", "interac",
+            "e-transfer", "etransfer",
             "wire transfer", "western union", "moneygram",
             "gift card", "bitcoin", "crypto payment",
             "send money", "transfer funds", "deposit required",
@@ -171,7 +171,8 @@ public class EmailChecker {
         String lower = body.toLowerCase();
         int score = 0;
         boolean hasPaymentContext = lower.contains("e-transfer") || lower.contains("interac")
-            || lower.contains("send money") || lower.contains("transfer") || lower.contains("payment");
+            || lower.contains("send money") || lower.contains("transfer funds") || lower.contains("transfer money")
+            || lower.contains("send $") || lower.contains("transfer $") || lower.contains("payment to");
 
         Pattern emailPattern = Pattern.compile("[a-zA-Z0-9._%+\\-]+@(gmail|hotmail|yahoo|outlook|icloud)\\.com");
         Matcher matcher = emailPattern.matcher(body);
