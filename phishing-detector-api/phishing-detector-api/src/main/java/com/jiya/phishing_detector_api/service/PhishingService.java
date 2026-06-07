@@ -44,8 +44,25 @@ public class PhishingService {
         String aiAnalysis = geminiService.analyzeEmail(emailBody);
         if (aiAnalysis != null) {
             result.setAiAnalysis(aiAnalysis);
-        }
 
+            // Adjust risk level based on Gemini verdict
+            String aiUpper = aiAnalysis.toUpperCase();
+            if (aiUpper.startsWith("LEGITIMATE")) {
+                result.setRiskScore(Math.min(result.getRiskScore(), 15));
+                result.setRiskLevel("LOW");
+            } else if (aiUpper.startsWith("SUSPICIOUS")) {
+                if (result.getRiskScore() < 16) {
+                    result.setRiskScore(30);
+                    result.setRiskLevel("MEDIUM");
+                }
+            } else if (aiUpper.startsWith("PHISHING") || aiUpper.startsWith("SCAM")) {
+                if (result.getRiskScore() < 46) {
+                    result.setRiskScore(70);
+                }
+                result.setRiskLevel("HIGH");
+            }
+        }
         return result;
     }
+}
 }
