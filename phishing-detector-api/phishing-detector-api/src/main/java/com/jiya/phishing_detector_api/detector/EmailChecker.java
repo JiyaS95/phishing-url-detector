@@ -170,18 +170,28 @@ public class EmailChecker {
     private static int checkPersonalEmailPayment(EmailResult result, String body) {
         String lower = body.toLowerCase();
         int score = 0;
-        boolean hasPaymentContext = lower.contains("e-transfer") || lower.contains("interac")
-            || lower.contains("send money") || lower.contains("transfer funds") || lower.contains("transfer money")
-            || lower.contains("send $") || lower.contains("transfer $") || lower.contains("payment to");
+        // Must have EXPLICIT payment request language - not just any financial word
+        boolean hasExplicitPayment = lower.contains("e-transfer") || lower.contains("send money")
+            || lower.contains("transfer funds") || lower.contains("transfer money")
+            || lower.contains("send $") || lower.contains("transfer $")
+            || lower.contains("etransfer to") || lower.contains("payment to");
+
+        if (!hasExplicitPayment) return 0;
 
         Pattern emailPattern = Pattern.compile("[a-zA-Z0-9._%+\\-]+@(gmail|hotmail|yahoo|outlook|icloud)\\.com");
         Matcher matcher = emailPattern.matcher(body);
 
-        if (hasPaymentContext && matcher.find()) {
-            result.addWarning("🚨 Payment requested to personal email: " + matcher.group());
+        if (matcher.find()) {
+            result.addWarning("\ud83d\udea8 Payment requested to personal email: " + matcher.group());
             score = 50;
         }
         return score;
+    }
+            result.addWarning("\ud83d\udea8 Payment requested to personal email: " + matcher.group());
+            score = 50;
+        }
+        return score;
+    }
     }
 
     private static List<String> extractUrls(String text) {
