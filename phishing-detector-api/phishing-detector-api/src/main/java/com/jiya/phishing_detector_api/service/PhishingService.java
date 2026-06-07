@@ -40,12 +40,10 @@ public class PhishingService {
     public EmailResult analyzeEmail(String emailBody) {
         EmailResult result = EmailChecker.analyze(emailBody, safeBrowsingService);
 
-        // Add Gemini AI analysis
         String aiAnalysis = geminiService.analyzeEmail(emailBody);
         if (aiAnalysis != null) {
             result.setAiAnalysis(aiAnalysis);
 
-            // Adjust risk level based on Gemini verdict
             String aiUpper = aiAnalysis.toUpperCase();
             if (aiUpper.startsWith("LEGITIMATE")) {
                 result.setRiskScore(Math.min(result.getRiskScore(), 15));
@@ -64,5 +62,4 @@ public class PhishingService {
         }
         return result;
     }
-}
 }
