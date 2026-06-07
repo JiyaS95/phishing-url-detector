@@ -367,6 +367,12 @@
                 }
                 html += "</ul>";
             }
+            if (data.aiAnalysis) {
+                html += "<div style='margin-top:12px;padding:12px;background:#0a0a1a;border-radius:8px;border-left:3px solid #4f46e5;'>";
+                html += "<div class='meta-label' style='margin-bottom:6px;'>🤖 AI Analysis</div>";
+                html += "<div style='font-size:13px;color:#ccc;line-height:1.6;'>" + data.aiAnalysis + "</div>";
+                html += "</div>";
+            }
             html += "</div>";
             document.getElementById("emailResult").innerHTML = html;
         });
