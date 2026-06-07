@@ -90,6 +90,12 @@ function renderEmailResult(data, el) {
   }
   const level = riskLevel(data.riskLevel);
   const warnings = data.warnings || [];
+  const aiBlock = data.aiAnalysis
+    ? `<div style="margin-top:10px;padding:10px;background:#0a0a1a;border-radius:8px;border-left:3px solid #4f46e5;">
+        <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">🤖 AI Analysis</div>
+        <div style="font-size:12px;color:#ccc;line-height:1.5;">${data.aiAnalysis}</div>
+       </div>`
+    : '';
   el.innerHTML = `
     <span class="risk-badge risk-${level}">${data.riskLevel || 'LOW'}</span>
     <div class="score">Risk Score: ${data.riskScore}/100</div>
@@ -97,5 +103,6 @@ function renderEmailResult(data, el) {
       ? '<div class="no-warnings">✅ No threats detected</div>'
       : '<ul class="warnings-list">' + warnings.map(w => `<li>${w}</li>`).join('') + '</ul>'
     }
+    ${aiBlock}
   `;
 }
