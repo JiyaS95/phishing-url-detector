@@ -110,10 +110,11 @@ function showBanner(data) {
   ).join('');
   const warningsBlock = warnings ? `<div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Warnings</div><ul style="padding:0;margin:0;">${warnings}</ul>` : '';
 
-  const aiBlock = data.aiAnalysis
+  const cleanAi = data.aiAnalysis ? data.aiAnalysis.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1') : null;
+  const aiBlock = cleanAi
     ? `<div style="margin-top:10px;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;border-left:3px solid #4f46e5;">
         <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">🤖 AI Analysis</div>
-        <div style="font-size:12px;color:#ccc;line-height:1.5;">${data.aiAnalysis}</div>
+        <div style="font-size:12px;color:#ccc;line-height:1.5;">${cleanAi}</div>
        </div>`
     : '';
 
