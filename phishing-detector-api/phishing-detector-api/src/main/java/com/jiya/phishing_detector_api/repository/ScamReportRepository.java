@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ScamReportRepository extends JpaRepository<ScamReport, Long> {
-    Optional<ScamReport> findByUrlOrEmail(String urlOrEmail);
+    @Query("SELECT s FROM ScamReport s WHERE s.urlOrEmail = :value")
+    Optional<ScamReport> findByUrlOrEmailValue(@org.springframework.data.repository.query.Param("value") String value);
     List<ScamReport> findTop10ByOrderByReportCountDesc();
 
     @Query("SELECT s FROM ScamReport s ORDER BY s.reportedAt DESC")
