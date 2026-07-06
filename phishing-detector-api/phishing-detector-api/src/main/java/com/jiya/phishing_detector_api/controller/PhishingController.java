@@ -1,36 +1,23 @@
 package com.jiya.phishing_detector_api.controller;
 
-import java.util.Map;
 import com.jiya.phishing_detector_api.detector.URLResult;
+import com.jiya.phishing_detector_api.model.User;
 import com.jiya.phishing_detector_api.service.PhishingService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
-
-
-@RestController // class answers web requests
+@RestController
 public class PhishingController {
-
 
     private final PhishingService phishService;
 
-    public PhishingController (PhishingService phishService) {
+    public PhishingController(PhishingService phishService) {
         this.phishService = phishService;
     }
-    @GetMapping("/check") //when someone goes to /hello
-    public URLResult checkURL(@RequestParam String url) { //we want to return this function
-    ///check?url=http://example.com --> grab the url from the web address and put it in the url variable
-        
-        return phishService.analyze(url);
+
+    @GetMapping("/check")
+    public URLResult checkURL(@RequestParam String url,
+                              @AuthenticationPrincipal User user) {
+        return phishService.analyze(url, user);
     }
 }
-
-/*
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-export PATH=$JAVA_HOME/bin:$PATH
-
-
-./mvnw spring-boot:run
-
-*/
