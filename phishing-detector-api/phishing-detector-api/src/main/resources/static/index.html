@@ -406,6 +406,15 @@
         return token ? { "Authorization": "Bearer " + token } : {};
     }
 
+    // Handle 403 - clear bad token
+    function handle403() {
+        token = null; currentUser = null;
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        updateNav();
+        document.getElementById("historyContent").innerHTML = '<div class="login-prompt">Session expired. <a onclick="openModal(\'login\')">Login again</a></div>';
+    }
+
     // URL Check
     async function checkURL() {
         const url = document.getElementById("urlInput").value;
@@ -413,11 +422,12 @@
         document.getElementById("urlResult").innerHTML = '<div class="loading">Analyzing...</div>';
         try {
             const res = await fetch(API + "/check?url=" + encodeURIComponent(url), { headers: authHeaders() });
+            if (res.status === 403) { handle403(); return; }
             const data = await res.json();
             document.getElementById("urlResult").innerHTML = renderUrlResult(data);
             if (token) loadHistory();
         } catch(e) {
-            document.getElementById("urlResult").innerHTML = '<div class="error-msg">Could not reach backend.</div>';
+            document.getElementById("urlResult").innerHTML = '<div class="error-msg">Could not reach backend. Try again in a moment.</div>';
         }
     }
 
