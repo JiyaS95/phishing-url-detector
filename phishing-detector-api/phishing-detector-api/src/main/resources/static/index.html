@@ -296,8 +296,11 @@
     const API = "";
     let token = localStorage.getItem("token");
     let currentUser = JSON.parse(localStorage.getItem("user") || "null");
-
-    // Init
+    if (currentUser && !currentUser.email) {
+        token = null; currentUser = null;
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+    }
     updateNav();
     if (token) loadHistory();
 
