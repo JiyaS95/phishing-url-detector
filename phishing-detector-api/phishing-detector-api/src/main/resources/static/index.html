@@ -246,7 +246,12 @@
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" id="registerPassword" placeholder="••••••••">
+            <input type="password" id="registerPassword" placeholder="••••••••" oninput="checkPasswordStrength(this.value)">
+            <div id="pwStrength" style="margin-top:8px;font-size:12px;color:#555;">
+                <span id="pw8" style="margin-right:12px;">○ 8+ characters</span>
+                <span id="pwUpper" style="margin-right:12px;">○ Uppercase letter</span>
+                <span id="pwNum">○ Number</span>
+            </div>
         </div>
         <div class="form-error" id="registerError"></div>
         <button class="btn-full" onclick="register()">Create Account</button>
@@ -356,6 +361,15 @@
         const password = document.getElementById("registerPassword").value;
         const errEl = document.getElementById("registerError");
         errEl.style.display = "none";
+        if (password.length < 8) {
+            errEl.textContent = "Password must be at least 8 characters"; errEl.style.display = "block"; return;
+        }
+        if (!/[A-Z]/.test(password)) {
+            errEl.textContent = "Password must contain at least one uppercase letter"; errEl.style.display = "block"; return;
+        }
+        if (!/[0-9]/.test(password)) {
+            errEl.textContent = "Password must contain at least one number"; errEl.style.display = "block"; return;
+        }
         try {
             const res = await fetch(API + "/auth/register", {
                 method: "POST",
@@ -465,7 +479,7 @@
                 const level = scan.riskLevel ? (scan.riskLevel.includes("HIGH") ? "HIGH" : scan.riskLevel.includes("MEDIUM") ? "MEDIUM" : "LOW") : "LOW";
                 const colors = { LOW: {bg:"#14532d",color:"#4ade80"}, MEDIUM: {bg:"#713f12",color:"#fbbf24"}, HIGH: {bg:"#7f1d1d",color:"#f87171"} };
                 const c = colors[level];
-                const date = new Date(scan.scannedAt).toLocaleString();
+                const date = new Date(scan.scannedAt + 'Z').toLocaleString();
                 html += `<div class="history-item">
                     <div>
                         <div class="history-type">${scan.scanType}</div>
@@ -533,6 +547,19 @@
         }
         html += "</div>";
         return html;
+    }
+
+    function checkPasswordStrength(pw) {
+        const el8 = document.getElementById("pw8");
+        const elU = document.getElementById("pwUpper");
+        const elN = document.getElementById("pwNum");
+        if (!el8) return;
+        el8.textContent = (pw.length >= 8 ? "✅" : "○") + " 8+ characters";
+        el8.style.color = pw.length >= 8 ? "#4ade80" : "#555";
+        elU.textContent = (/[A-Z]/.test(pw) ? "✅" : "○") + " Uppercase letter";
+        elU.style.color = /[A-Z]/.test(pw) ? "#4ade80" : "#555";
+        elN.textContent = (/[0-9]/.test(pw) ? "✅" : "○") + " Number";
+        elN.style.color = /[0-9]/.test(pw) ? "#4ade80" : "#555";
     }
 
     // Enter key

@@ -16,11 +16,17 @@ public class ScanHistoryService {
     }
 
     public void saveScan(User user, String scanType, String inputText, String riskLevel, int riskScore) {
-        if (user == null) return; // don't save if not logged in
+        if (user == null) return;
+
+        // Never save the same input twice for the same user
+        List<ScanHistory> existing = scanHistoryRepository.findByUserOrderByScannedAtDesc(user);
+        boolean alreadySaved = existing.stream()
+            .anyMatch(s -> inputText != null && inputText.equals(s.getInputText()));
+        if (alreadySaved) return;
+
         ScanHistory scan = new ScanHistory();
         scan.setUser(user);
         scan.setScanType(scanType);
-        // truncate long email bodies for storage
         if (inputText != null && inputText.length() > 500) {
             inputText = inputText.substring(0, 500) + "...";
         }
