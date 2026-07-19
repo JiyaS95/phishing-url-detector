@@ -30,19 +30,26 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            if (jwtUtil.isValid(token)) {
-                String email = jwtUtil.extractEmail(token);
-                userRepository.findByEmail(email).ifPresent(user -> {
-                    UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(user, null, List.of());
-                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                });
+        try {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                if (jwtUtil.isValid(token)) {
+                    String email = jwtUtil.extractEmail(token);
+                    userRepository.findByEmail(email).ifPresent(user -> {
+                        UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(user, null, List.of());
+                        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                    });
+                }
+                // If token is invalid, just continue without auth - don't reject
             }
+        } catch (Exception e) {
+            // Never block the request due to token parsing errors
+            System.out.println("JWT filter error (ignored): " + e.getMessage());
         }
+
         filterChain.doFilter(request, response);
     }
 }
