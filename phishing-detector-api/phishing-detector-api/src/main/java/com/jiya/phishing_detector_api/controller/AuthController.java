@@ -29,6 +29,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+        if (req.getEmail() == null || req.getEmail().isBlank()
+            || req.getPassword() == null || req.getPassword().isBlank()
+            || req.getName() == null || req.getName().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Name, email, and password are required"));
+        }
         if (userRepository.existsByEmail(req.getEmail())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email already registered"));
         }
@@ -47,10 +52,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        Optional<User> userOpt = userRepository.findByEmail(req.getEmail());
-        if (userOpt.isEmpty() || !passwordEncoder.matches(req.getPassword(), userOpt.get().getPassword())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid email or password"));
+        if (req.getEmail() == null || req.getEmail().isBlank()
+            || req.getPassword() == null || req.getPassword().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email and password are required"));
         }
+        Optional<User> userOpt = userRepository.findByEmail(req.getEmail());
         User user = userOpt.get();
         String token = jwtUtil.generateToken(user.getEmail());
         return ResponseEntity.ok(Map.of(
