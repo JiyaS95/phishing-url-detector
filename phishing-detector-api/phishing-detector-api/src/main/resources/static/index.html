@@ -6,35 +6,98 @@
     <title>Phishing Detector</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: "Segoe UI", sans-serif;
             background: #0a0a14;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             color: #e0e0e0;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
+        /* NAV */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 40px;
+            background: #13131f;
+            border-bottom: 1px solid #1e1e32;
         }
+        .nav-logo { font-size: 20px; font-weight: 800; color: #fff; }
+        .nav-right { display: flex; gap: 12px; align-items: center; }
+        .nav-user { font-size: 13px; color: #888; }
+        .btn-sm {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary { background: #4f46e5; color: #fff; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-ghost { background: #1e1e2e; color: #888; }
+        .btn-ghost:hover { background: #2a2a40; color: #fff; }
+        .btn-danger { background: #7f1d1d; color: #f87171; }
 
+        /* MAIN */
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+        }
+        .header { text-align: center; margin-bottom: 40px; }
         .logo { font-size: 56px; margin-bottom: 12px; }
-
-        h1 {
-            font-size: 36px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
+        h1 { font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 8px; }
         .subtitle { font-size: 15px; color: #666; }
 
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: #13131f;
+            border: 1px solid #1e1e32;
+            border-radius: 16px;
+            padding: 32px;
+            width: 400px;
+            position: relative;
+        }
+        .modal h2 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 24px; }
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 20px;
+            background: none; border: none;
+            color: #888; font-size: 20px; cursor: pointer;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #2a2a40;
+            border-radius: 8px;
+            background: #0d0d1a;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        .form-group input:focus { border-color: #4f46e5; }
+        .btn-full { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #4f46e5; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+        .btn-full:hover { background: #4338ca; }
+        .modal-switch { text-align: center; margin-top: 16px; font-size: 13px; color: #666; }
+        .modal-switch a { color: #4f46e5; cursor: pointer; text-decoration: none; }
+        .form-error { color: #f87171; font-size: 13px; margin-top: 8px; display: none; }
+
+        /* TABS */
         .box {
             background: #13131f;
             border: 1px solid #1e1e32;
@@ -42,350 +105,156 @@
             padding: 40px;
             width: 620px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            margin-bottom: 24px;
         }
-
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 28px;
-        }
-
+        .tabs { display: flex; gap: 8px; margin-bottom: 28px; }
         .tab {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 10px;
-            background: #1e1e2e;
-            color: #888;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s;
+            flex: 1; padding: 10px; border: none; border-radius: 10px;
+            background: #1e1e2e; color: #888; cursor: pointer;
+            font-size: 14px; font-weight: 600; transition: all 0.2s;
         }
-
-        .tab.active {
-            background: #4f46e5;
-            color: #fff;
-        }
-
+        .tab.active { background: #4f46e5; color: #fff; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .input-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
+        .input-row { display: flex; gap: 10px; margin-bottom: 24px; }
+        input[type="text"] {
+            flex: 1; padding: 14px 18px; font-size: 14px;
+            border: 1px solid #2a2a40; border-radius: 10px;
+            background: #0d0d1a; color: #fff; outline: none; transition: border 0.2s;
         }
-
-        input {
-            flex: 1;
-            padding: 14px 18px;
-            font-size: 14px;
-            border: 1px solid #2a2a40;
-            border-radius: 10px;
-            background: #0d0d1a;
-            color: #fff;
-            outline: none;
-            transition: border 0.2s;
-        }
-
-        input:focus { border-color: #4f46e5; }
-        input::placeholder { color: #444; }
-
+        input[type="text"]:focus { border-color: #4f46e5; }
+        input[type="text"]::placeholder { color: #444; }
         textarea {
-            width: 100%;
-            height: 160px;
-            padding: 14px 18px;
-            font-size: 14px;
-            border: 1px solid #2a2a40;
-            border-radius: 10px;
-            background: #0d0d1a;
-            color: #fff;
-            outline: none;
-            resize: vertical;
-            font-family: inherit;
-            margin-bottom: 16px;
-            transition: border 0.2s;
+            width: 100%; height: 160px; padding: 14px 18px; font-size: 14px;
+            border: 1px solid #2a2a40; border-radius: 10px;
+            background: #0d0d1a; color: #fff; outline: none;
+            resize: vertical; font-family: inherit; margin-bottom: 16px; transition: border 0.2s;
         }
-
         textarea:focus { border-color: #4f46e5; }
         textarea::placeholder { color: #444; }
-
-        button {
-            padding: 14px 24px;
-            font-size: 14px;
-            font-weight: 700;
-            background: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-            white-space: nowrap;
+        button.analyze-btn {
+            padding: 14px 24px; font-size: 14px; font-weight: 700;
+            background: #4f46e5; color: white; border: none;
+            border-radius: 10px; cursor: pointer; transition: background 0.2s; white-space: nowrap;
         }
+        button.analyze-btn:hover { background: #4338ca; }
+        .full-btn { width: 100%; padding: 14px; margin-bottom: 24px; }
 
-        button:hover { background: #4338ca; }
-
-        .full-btn {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 24px;
+        .error-msg {
+            color: #f87171; font-weight: 600; font-size: 14px;
+            padding: 12px; background: #2a0a0a; border-radius: 8px; border-left: 3px solid #f87171;
         }
-
-        .error {
-            color: #f87171;
-            font-weight: 600;
-            font-size: 14px;
-            padding: 12px;
-            background: #2a0a0a;
-            border-radius: 8px;
-            border-left: 3px solid #f87171;
-        }
-
         .result-card {
-            background: #0d0d1a;
-            border: 1px solid #1e1e32;
-            border-radius: 12px;
-            padding: 20px;
-            animation: fadeIn 0.3s ease;
+            background: #0d0d1a; border: 1px solid #1e1e32;
+            border-radius: 12px; padding: 20px; animation: fadeIn 0.3s ease;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
+        @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
         .risk-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 16px;
-            letter-spacing: 0.5px;
+            display: inline-block; padding: 6px 16px; border-radius: 20px;
+            font-size: 14px; font-weight: 800; margin-bottom: 16px; letter-spacing: 0.5px;
         }
-
-        .risk-LOW    { background: #14532d; color: #4ade80; }
+        .risk-LOW { background: #14532d; color: #4ade80; }
         .risk-MEDIUM { background: #713f12; color: #fbbf24; }
-        .risk-HIGH   { background: #7f1d1d; color: #f87171; }
-
-        .meta-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .meta-item {
-            background: #13131f;
-            border-radius: 8px;
-            padding: 10px 14px;
-        }
-
-        .meta-label {
-            font-size: 11px;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .meta-value {
-            font-size: 13px;
-            color: #ccc;
-            word-break: break-all;
-        }
-
+        .risk-HIGH { background: #7f1d1d; color: #f87171; }
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .meta-item { background: #13131f; border-radius: 8px; padding: 10px 14px; }
+        .meta-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .meta-value { font-size: 13px; color: #ccc; word-break: break-all; }
         .score-bar-wrap { margin-bottom: 16px; }
-
-        .score-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 6px;
-        }
-
-        .score-bar {
-            height: 6px;
-            background: #1e1e32;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .score-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.6s ease;
-        }
-
-        .warnings-title {
-            font-size: 12px;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .warnings-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
+        .score-label { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 6px; }
+        .score-bar { height: 6px; background: #1e1e32; border-radius: 3px; overflow: hidden; }
+        .score-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+        .warnings-title { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .warnings-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
         .warnings-list li {
-            font-size: 13px;
-            padding: 8px 12px;
-            background: #13131f;
-            border-radius: 8px;
-            border-left: 3px solid #4f46e5;
-            color: #ccc;
-            line-height: 1.4;
+            font-size: 13px; padding: 8px 12px; background: #13131f;
+            border-radius: 8px; border-left: 3px solid #4f46e5; color: #ccc; line-height: 1.4;
         }
+        .no-warnings { font-size: 14px; color: #4ade80; text-align: center; padding: 12px; background: #0a2a0a; border-radius: 8px; }
+        .loading { color: #666; font-size: 14px; text-align: center; padding: 20px; }
 
-        .no-warnings {
-            font-size: 14px;
-            color: #4ade80;
-            text-align: center;
-            padding: 12px;
-            background: #0a2a0a;
-            border-radius: 8px;
+        /* HISTORY */
+        .history-box {
+            background: #13131f; border: 1px solid #1e1e32;
+            border-radius: 16px; padding: 32px; width: 620px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
+        .history-box h2 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; }
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; background: #0d0d1a; border-radius: 10px;
+            margin-bottom: 8px; border: 1px solid #1e1e32;
+        }
+        .history-type {
+            font-size: 11px; font-weight: 700; padding: 3px 8px;
+            border-radius: 6px; background: #1e1e2e; color: #888; margin-bottom: 4px;
+        }
+        .history-input { font-size: 13px; color: #ccc; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .history-meta { font-size: 11px; color: #555; margin-top: 4px; }
+        .history-badge { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; }
+        .login-prompt { text-align: center; color: #555; font-size: 14px; padding: 20px; }
+        .login-prompt a { color: #4f46e5; cursor: pointer; }
 
-        .loading {
-            color: #666;
-            font-size: 14px;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .footer {
-            margin-top: 32px;
-            font-size: 12px;
-            color: #333;
-        }
+        .footer { margin-top: 32px; font-size: 12px; color: #333; text-align: center; }
     </style>
 </head>
-<script>
-    // Tab switching
-    function switchTab(tab) {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
-        document.getElementById("tab-" + tab).classList.add("active");
-        document.querySelector("[data-tab='" + tab + "']").classList.add("active");
-    }
-
-    function getRiskLevel(riskLevel) {
-        if (!riskLevel) return "LOW";
-        if (riskLevel.includes("HIGH")) return "HIGH";
-        if (riskLevel.includes("MEDIUM")) return "MEDIUM";
-        return "LOW";
-    }
-
-    function renderWarnings(warnings) {
-        if (!warnings || warnings.length === 0) {
-            return "<div class='no-warnings'>✅ No threats detected</div>";
-        }
-        var html = "<div class='warnings-title'>Warnings</div><ul class='warnings-list'>";
-        for (var i = 0; i < warnings.length; i++) {
-            html += "<li>" + warnings[i] + "</li>";
-        }
-        html += "</ul>";
-        return html;
-    }
-
-    function renderScoreBar(score, color) {
-        return "<div class='score-bar-wrap'>" +
-            "<div class='score-label'><span>Risk Score</span><span>" + score + "/100</span></div>" +
-            "<div class='score-bar'><div class='score-fill' style='width:" + score + "%;background:" + color + "'></div></div>" +
-            "</div>";
-    }
-
-    // URL Check
-    function checkURL() {
-        var url = document.getElementById("urlInput").value;
-        if (url == "") {
-            document.getElementById("urlResult").innerHTML = "<div class='error'>Please enter a URL</div>";
-            return;
-        }
-        document.getElementById("urlResult").innerHTML = "<div class='loading'>Analyzing...</div>";
-
-        fetch("/check?url=" + encodeURIComponent(url))
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data.error) {
-                    document.getElementById("urlResult").innerHTML = "<div class='error'>" + data.error + "</div>";
-                    return;
-                }
-                var level = getRiskLevel(data.riskLevel);
-                var barColor = level === "HIGH" ? "#f87171" : level === "MEDIUM" ? "#fbbf24" : "#4ade80";
-                var html = "<div class='result-card'>";
-                html += "<span class='risk-badge risk-" + level + "'>" + (data.riskLevel || "LOW") + "</span>";
-                html += renderScoreBar(data.riskScore, barColor);
-                html += "<div class='meta-grid'>";
-                html += "<div class='meta-item'><div class='meta-label'>Protocol</div><div class='meta-value'>" + (data.protocol || "-") + "</div></div>";
-                html += "<div class='meta-item'><div class='meta-label'>Domain</div><div class='meta-value'>" + (data.domain || "-") + "</div></div>";
-                if (data.path) html += "<div class='meta-item' style='grid-column:span 2'><div class='meta-label'>Path</div><div class='meta-value'>" + data.path + "</div></div>";
-                html += "</div>";
-                html += renderWarnings(data.warnings);
-                html += "</div>";
-                document.getElementById("urlResult").innerHTML = html;
-            });
-    }
-
-    // Email Check
-    function checkEmail() {
-        var body = document.getElementById("emailInput").value;
-        if (body.trim() == "") {
-            document.getElementById("emailResult").innerHTML = "<div class='error'>Please paste email content</div>";
-            return;
-        }
-        document.getElementById("emailResult").innerHTML = "<div class='loading'>Analyzing...</div>";
-
-        fetch("/check-email", {
-            method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: body
-        })
-        .then(function(response) { return response.json(); })
-        .then(function(data) {
-            if (data.error) {
-                document.getElementById("emailResult").innerHTML = "<div class='error'>" + data.error + "</div>";
-                return;
-            }
-            var level = getRiskLevel(data.riskLevel);
-            var barColor = level === "HIGH" ? "#f87171" : level === "MEDIUM" ? "#fbbf24" : "#4ade80";
-            var html = "<div class='result-card'>";
-            html += "<span class='risk-badge risk-" + level + "'>" + (data.riskLevel || "LOW") + "</span>";
-            html += renderScoreBar(data.riskScore, barColor);
-            html += renderWarnings(data.warnings);
-            if (data.suspiciousUrls && data.suspiciousUrls.length > 0) {
-                html += "<div class='warnings-title' style='margin-top:12px'>Suspicious URLs Found</div><ul class='warnings-list'>";
-                for (var i = 0; i < data.suspiciousUrls.length; i++) {
-                    html += "<li>" + data.suspiciousUrls[i] + "</li>";
-                }
-                html += "</ul>";
-            }
-            var cleanAi = data.aiAnalysis ? data.aiAnalysis.replace(/\*\*(.*?)\*\*/g, "$1").replace(/\*(.*?)\*/g, "$1") : null;
-            if (cleanAi) {
-                html += "<div style='margin-top:12px;padding:12px;background:#0a0a1a;border-radius:8px;border-left:3px solid #4f46e5;'>";
-                html += "<div class='meta-label' style='margin-bottom:6px;'>🤖 AI Analysis</div>";
-                html += "<div style='font-size:13px;color:#ccc;line-height:1.6;'>" + cleanAi + "</div>";
-                html += "</div>";
-            }
-            html += "</div>";
-            document.getElementById("emailResult").innerHTML = html;
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("urlInput").addEventListener("keydown", function(e) {
-            if (e.key === "Enter") checkURL();
-        });
-    });
-</script>
 <body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-logo">🛡️ Phishing Detector</div>
+    <div class="nav-right">
+        <span class="nav-user" id="navUser"></span>
+        <button class="btn-sm btn-ghost" id="btnLogin" onclick="openModal('login')">Login</button>
+        <button class="btn-sm btn-primary" id="btnRegister" onclick="openModal('register')">Sign Up</button>
+        <button class="btn-sm btn-danger" id="btnLogout" onclick="logout()" style="display:none">Logout</button>
+    </div>
+</nav>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('login')">✕</button>
+        <h2>Welcome back</h2>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="text" id="loginEmail" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••">
+        </div>
+        <div class="form-error" id="loginError"></div>
+        <button class="btn-full" onclick="login()">Login</button>
+        <div class="modal-switch">Don't have an account? <a onclick="switchModal('login','register')">Sign up</a></div>
+    </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="registerModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('register')">✕</button>
+        <h2>Create account</h2>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="registerName" placeholder="Your name">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="text" id="registerEmail" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="registerPassword" placeholder="••••••••">
+        </div>
+        <div class="form-error" id="registerError"></div>
+        <button class="btn-full" onclick="register()">Create Account</button>
+        <div class="modal-switch">Already have an account? <a onclick="switchModal('register','login')">Login</a></div>
+    </div>
+</div>
+
+<div class="main">
     <div class="header">
         <div class="logo">🛡️</div>
         <h1>Phishing Detector</h1>
@@ -397,22 +266,268 @@
             <button class="tab active" data-tab="url" onclick="switchTab('url')">🔗 URL Check</button>
             <button class="tab" data-tab="email" onclick="switchTab('email')">📧 Email Check</button>
         </div>
-
         <div id="tab-url" class="tab-content active">
             <div class="input-row">
                 <input type="text" id="urlInput" placeholder="https://example.com">
-                <button onclick="checkURL()">Analyze</button>
+                <button class="analyze-btn" onclick="checkURL()">Analyze</button>
             </div>
             <div id="urlResult"></div>
         </div>
-
         <div id="tab-email" class="tab-content">
             <textarea id="emailInput" placeholder="Paste email content here..."></textarea>
-            <button class="full-btn" onclick="checkEmail()">Analyze Email</button>
+            <button class="analyze-btn full-btn" onclick="checkEmail()">Analyze Email</button>
             <div id="emailResult"></div>
         </div>
     </div>
 
-    <p class="footer">Powered by Google Safe Browsing & URLhaus</p>
+    <div class="history-box">
+        <h2>📋 Scan History</h2>
+        <div id="historyContent">
+            <div class="login-prompt">
+                <a onclick="openModal('login')">Login</a> or <a onclick="openModal('register')">sign up</a> to save your scan history.
+            </div>
+        </div>
+    </div>
+
+    <p class="footer">Powered by Google Safe Browsing, URLhaus & Gemini AI</p>
+</div>
+
+<script>
+    const API = "";
+    let token = localStorage.getItem("token");
+    let currentUser = JSON.parse(localStorage.getItem("user") || "null");
+
+    // Init
+    updateNav();
+    if (token) loadHistory();
+
+    // Tab switching
+    function switchTab(tab) {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+        document.getElementById("tab-" + tab).classList.add("active");
+        document.querySelector("[data-tab='" + tab + "']").classList.add("active");
+    }
+
+    // Modal
+    function openModal(type) {
+        document.getElementById(type + "Modal").classList.add("active");
+    }
+    function closeModal(type) {
+        document.getElementById(type + "Modal").classList.remove("active");
+    }
+    function switchModal(from, to) {
+        closeModal(from);
+        openModal(to);
+    }
+
+    // Auth
+    async function login() {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        const errEl = document.getElementById("loginError");
+        errEl.style.display = "none";
+        try {
+            const res = await fetch(API + "/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (data.error) { errEl.textContent = data.error; errEl.style.display = "block"; return; }
+            token = data.token;
+            currentUser = { name: data.name, email: data.email };
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(currentUser));
+            closeModal("login");
+            updateNav();
+            loadHistory();
+        } catch(e) {
+            errEl.textContent = "Could not connect to server"; errEl.style.display = "block";
+        }
+    }
+
+    async function register() {
+        const name = document.getElementById("registerName").value;
+        const email = document.getElementById("registerEmail").value;
+        const password = document.getElementById("registerPassword").value;
+        const errEl = document.getElementById("registerError");
+        errEl.style.display = "none";
+        try {
+            const res = await fetch(API + "/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await res.json();
+            if (data.error) { errEl.textContent = data.error; errEl.style.display = "block"; return; }
+            token = data.token;
+            currentUser = { name: data.name, email: data.email };
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(currentUser));
+            closeModal("register");
+            updateNav();
+            loadHistory();
+        } catch(e) {
+            errEl.textContent = "Could not connect to server"; errEl.style.display = "block";
+        }
+    }
+
+    function logout() {
+        token = null; currentUser = null;
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        updateNav();
+        document.getElementById("historyContent").innerHTML = '<div class="login-prompt"><a onclick="openModal(\'login\')">Login</a> or <a onclick="openModal(\'register\')">sign up</a> to save your scan history.</div>';
+    }
+
+    function updateNav() {
+        const btnLogin = document.getElementById("btnLogin");
+        const btnRegister = document.getElementById("btnRegister");
+        const btnLogout = document.getElementById("btnLogout");
+        const navUser = document.getElementById("navUser");
+        if (currentUser) {
+            btnLogin.style.display = "none";
+            btnRegister.style.display = "none";
+            btnLogout.style.display = "block";
+            navUser.textContent = "Hi, " + currentUser.name;
+        } else {
+            btnLogin.style.display = "block";
+            btnRegister.style.display = "block";
+            btnLogout.style.display = "none";
+            navUser.textContent = "";
+        }
+    }
+
+    function authHeaders() {
+        return token ? { "Authorization": "Bearer " + token } : {};
+    }
+
+    // URL Check
+    async function checkURL() {
+        const url = document.getElementById("urlInput").value;
+        if (!url) return;
+        document.getElementById("urlResult").innerHTML = '<div class="loading">Analyzing...</div>';
+        try {
+            const res = await fetch(API + "/check?url=" + encodeURIComponent(url), { headers: authHeaders() });
+            const data = await res.json();
+            document.getElementById("urlResult").innerHTML = renderUrlResult(data);
+            if (token) loadHistory();
+        } catch(e) {
+            document.getElementById("urlResult").innerHTML = '<div class="error-msg">Could not reach backend.</div>';
+        }
+    }
+
+    // Email Check
+    async function checkEmail() {
+        const body = document.getElementById("emailInput").value;
+        if (!body.trim()) return;
+        document.getElementById("emailResult").innerHTML = '<div class="loading">Analyzing...</div>';
+        try {
+            const res = await fetch(API + "/check-email", {
+                method: "POST",
+                headers: { "Content-Type": "text/plain", ...authHeaders() },
+                body: body
+            });
+            const data = await res.json();
+            document.getElementById("emailResult").innerHTML = renderEmailResult(data);
+            if (token) loadHistory();
+        } catch(e) {
+            document.getElementById("emailResult").innerHTML = '<div class="error-msg">Could not reach backend.</div>';
+        }
+    }
+
+    // History
+    async function loadHistory() {
+        if (!token) return;
+        try {
+            const res = await fetch(API + "/history", { headers: authHeaders() });
+            const data = await res.json();
+            if (!Array.isArray(data) || data.length === 0) {
+                document.getElementById("historyContent").innerHTML = '<div class="login-prompt">No scans yet. Try analyzing a URL or email above.</div>';
+                return;
+            }
+            let html = "";
+            data.slice(0, 10).forEach(scan => {
+                const level = scan.riskLevel ? (scan.riskLevel.includes("HIGH") ? "HIGH" : scan.riskLevel.includes("MEDIUM") ? "MEDIUM" : "LOW") : "LOW";
+                const colors = { LOW: {bg:"#14532d",color:"#4ade80"}, MEDIUM: {bg:"#713f12",color:"#fbbf24"}, HIGH: {bg:"#7f1d1d",color:"#f87171"} };
+                const c = colors[level];
+                const date = new Date(scan.scannedAt).toLocaleString();
+                html += `<div class="history-item">
+                    <div>
+                        <div class="history-type">${scan.scanType}</div>
+                        <div class="history-input">${scan.inputText || "-"}</div>
+                        <div class="history-meta">${date}</div>
+                    </div>
+                    <span class="history-badge" style="background:${c.bg};color:${c.color}">${level} ${scan.riskScore}/100</span>
+                </div>`;
+            });
+            document.getElementById("historyContent").innerHTML = html;
+        } catch(e) {
+            console.error("History error", e);
+        }
+    }
+
+    // Render helpers
+    function getRiskLevel(rl) {
+        if (!rl) return "LOW";
+        if (rl.includes("HIGH")) return "HIGH";
+        if (rl.includes("MEDIUM")) return "MEDIUM";
+        return "LOW";
+    }
+
+    function renderScoreBar(score, color) {
+        return `<div class="score-bar-wrap">
+            <div class="score-label"><span>Risk Score</span><span>${score}/100</span></div>
+            <div class="score-bar"><div class="score-fill" style="width:${score}%;background:${color}"></div></div>
+        </div>`;
+    }
+
+    function renderWarnings(warnings) {
+        if (!warnings || warnings.length === 0) return '<div class="no-warnings">✅ No threats detected</div>';
+        return '<div class="warnings-title">Warnings</div><ul class="warnings-list">' + warnings.map(w => `<li>${w}</li>`).join("") + "</ul>";
+    }
+
+    function renderUrlResult(data) {
+        if (data.error) return `<div class="error-msg">${data.error}</div>`;
+        const level = getRiskLevel(data.riskLevel);
+        const color = level==="HIGH"?"#f87171":level==="MEDIUM"?"#fbbf24":"#4ade80";
+        return `<div class="result-card">
+            <span class="risk-badge risk-${level}">${data.riskLevel||"LOW"}</span>
+            ${renderScoreBar(data.riskScore, color)}
+            <div class="meta-grid">
+                <div class="meta-item"><div class="meta-label">Protocol</div><div class="meta-value">${data.protocol||"-"}</div></div>
+                <div class="meta-item"><div class="meta-label">Domain</div><div class="meta-value">${data.domain||"-"}</div></div>
+                ${data.path ? `<div class="meta-item" style="grid-column:span 2"><div class="meta-label">Path</div><div class="meta-value">${data.path}</div></div>` : ""}
+            </div>
+            ${renderWarnings(data.warnings)}
+        </div>`;
+    }
+
+    function renderEmailResult(data) {
+        if (data.error) return `<div class="error-msg">${data.error}</div>`;
+        const level = getRiskLevel(data.riskLevel);
+        const color = level==="HIGH"?"#f87171":level==="MEDIUM"?"#fbbf24":"#4ade80";
+        let html = `<div class="result-card">
+            <span class="risk-badge risk-${level}">${data.riskLevel||"LOW"}</span>
+            ${renderScoreBar(data.riskScore, color)}
+            ${renderWarnings(data.warnings)}`;
+        if (data.aiAnalysis) {
+            html += `<div style="margin-top:12px;padding:10px;background:#0a0a1a;border-radius:8px;border-left:3px solid #4f46e5;">
+                <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🤖 AI Analysis</div>
+                <div style="font-size:12px;color:#ccc;line-height:1.5;">${data.aiAnalysis}</div>
+            </div>`;
+        }
+        html += "</div>";
+        return html;
+    }
+
+    // Enter key
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("urlInput").addEventListener("keydown", e => {
+            if (e.key === "Enter") checkURL();
+        });
+    });
+</script>
 </body>
 </html>
