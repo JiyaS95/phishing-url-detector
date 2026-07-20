@@ -6,8 +6,6 @@ import com.jiya.phishing_detector_api.detector.EmailChecker;
 import com.jiya.phishing_detector_api.detector.EmailResult;
 import com.jiya.phishing_detector_api.model.User;
 import org.springframework.stereotype.Service;
-import java.util.Set;
-import java.util.HashSet;
 
 @Service
 public class PhishingService {
@@ -15,36 +13,38 @@ public class PhishingService {
     private final SafeBrowsingService safeBrowsingService;
     private final GeminiService geminiService;
     private final ScanHistoryService scanHistoryService;
-    private Set<String> whitelist = new HashSet<>();
-    private Set<String> blacklist = new HashSet<>();
+    private final DomainListService domainListService;
 
     public PhishingService(SafeBrowsingService safeBrowsingService,
                            GeminiService geminiService,
-                           ScanHistoryService scanHistoryService) {
+                           ScanHistoryService scanHistoryService,
+                           DomainListService domainListService) {
         this.safeBrowsingService = safeBrowsingService;
         this.geminiService = geminiService;
         this.scanHistoryService = scanHistoryService;
-        whitelist.add("google.com");
-        whitelist.add("github.com");
-        whitelist.add("walmart.com");
-        whitelist.add("amazon.com");
-        blacklist.add("phishing.com");
-        blacklist.add("badsite.com");
+        this.domainListService = domainListService;
     }
 
     public URLResult analyze(String url, User user) {
-        URLResult result = URLChecker.analyze(url, whitelist, blacklist);
+        // Use database whitelist/blacklist
+        URLResult result = URLChecker.analyze(url, domainListService.getWhitelist(), domainListService.getBlacklist());
+
         if (safeBrowsingService.isMalicious(url)) {
             result.addWarning("Flagged by Google Safe Browsing");
             result.setRiskScore(Math.min(result.getRiskScore() + 50, 100));
             result.setRiskLevel("HIGH");
         }
-        // Save to history if logged in
+
+        // Add Gemini AI analysis for URLs
+        String aiAnalysis = geminiService.analyzeUrl(url, result);
+        if (aiAnalysis != null) {
+            result.setAiAnalysis(aiAnalysis);
+        }
+
         scanHistoryService.saveScan(user, "URL", url, result.getRiskLevel(), result.getRiskScore());
         return result;
     }
 
-    // Keep old method for backward compatibility
     public URLResult analyze(String url) {
         return analyze(url, null);
     }
@@ -55,7 +55,6 @@ public class PhishingService {
         if (aiAnalysis != null) {
             result.setAiAnalysis(aiAnalysis);
         }
-        // Save to history if logged in
         scanHistoryService.saveScan(user, "EMAIL", emailBody, result.getRiskLevel(), result.getRiskScore());
         return result;
     }

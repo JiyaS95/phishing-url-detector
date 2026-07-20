@@ -11,6 +11,7 @@ public class URLResult {
     private int riskScore;
     private String error;
     private String riskLevel;
+    private String aiAnalysis;
 
     public void setProtocol (String protocol) {
         this.protocol = protocol;
@@ -63,6 +64,8 @@ public class URLResult {
     public void addWarning (String warning) {
         warnings.add(warning);
     }
+    public void setAiAnalysis(String aiAnalysis) { this.aiAnalysis = aiAnalysis; }
+    public String getAiAnalysis() { return aiAnalysis; }
     
 
     

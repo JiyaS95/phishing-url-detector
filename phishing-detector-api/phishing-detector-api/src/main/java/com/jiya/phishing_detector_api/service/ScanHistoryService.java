@@ -19,18 +19,20 @@ public class ScanHistoryService {
         if (user == null) return;
 
         // Never save the same input twice for the same user
+        final String finalInput = inputText;
         List<ScanHistory> existing = scanHistoryRepository.findByUserOrderByScannedAtDesc(user);
         boolean alreadySaved = existing.stream()
-            .anyMatch(s -> inputText != null && inputText.equals(s.getInputText()));
+            .anyMatch(s -> finalInput != null && finalInput.equals(s.getInputText()));
         if (alreadySaved) return;
 
         ScanHistory scan = new ScanHistory();
         scan.setUser(user);
         scan.setScanType(scanType);
-        if (inputText != null && inputText.length() > 500) {
-            inputText = inputText.substring(0, 500) + "...";
+        String textToSave = inputText;
+        if (textToSave != null && textToSave.length() > 500) {
+            textToSave = textToSave.substring(0, 500) + "...";
         }
-        scan.setInputText(inputText);
+        scan.setInputText(textToSave);
         scan.setRiskLevel(riskLevel);
         scan.setRiskScore(riskScore);
         scanHistoryRepository.save(scan);
