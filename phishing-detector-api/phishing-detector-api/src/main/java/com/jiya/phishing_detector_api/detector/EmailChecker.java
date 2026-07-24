@@ -20,6 +20,7 @@ public class EmailChecker {
         riskScore += checkSuspiciousLinks(result, emailBody, safeBrowsing);
         riskScore += checkCredentialRequests(result, emailBody);
         riskScore += checkThreatLanguage(result, emailBody);
+        riskScore += checkCanadianScams(result, emailBody);
         riskScore += checkFinancialFraud(result, emailBody);
         riskScore += checkPersonalInfoRequests(result, emailBody);
         riskScore += checkPersonalEmailPayment(result, emailBody);
@@ -165,6 +166,39 @@ public class EmailChecker {
             return 50;
         }
         return 0;
+    }
+
+    private static int checkCanadianScams(EmailResult result, String body) {
+        String lower = body.toLowerCase();
+        int score = 0;
+
+        String[][] canadianScams = {
+            {"canada revenue agency", "25", "CRA impersonation detected"},
+            {"cra ", "20", "Possible CRA impersonation"},
+            {"tax refund", "20", "Fake tax refund scam"},
+            {"osap", "20", "Possible OSAP impersonation"},
+            {"service canada", "20", "Possible Service Canada impersonation"},
+            {"cerb", "20", "Possible CERB payment scam"},
+            {"sin number", "25", "Requesting Social Insurance Number"},
+            {"social insurance", "25", "Requesting Social Insurance Number"},
+            {"interac e-transfer", "25", "E-transfer payment scam"},
+            {"send an e-transfer", "30", "E-transfer payment scam"},
+            {"rogers", "10", "Possible Rogers impersonation"},
+            {"bell canada", "10", "Possible Bell Canada impersonation"},
+            {"tim hortons", "15", "Possible Tim Hortons contest scam"},
+            {"rrsp", "15", "Possible RRSP investment scam"},
+            {"warrant for your arrest", "35", "CRA arrest threat scam"},
+            {"police will be sent", "35", "CRA arrest threat scam"},
+            {"suspended your account", "20", "Account suspension scam"}
+        };
+
+        for (String[] scam : canadianScams) {
+            if (lower.contains(scam[0])) {
+                result.addWarning("🍁 Canadian scam indicator: \"" + scam[2] + "\"");
+                score += Integer.parseInt(scam[1]);
+            }
+        }
+        return Math.min(score, 50);
     }
 
     private static List<String> extractUrls(String text) {

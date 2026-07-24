@@ -286,8 +286,8 @@
     </div>
 
     <div class="history-box">
-        <h2>📋 Scan History</h2>
-        <div id="historyContent">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><h2 style="margin:0">📋 Scan History</h2><button id="clearAllBtn" onclick="clearAllHistory()" style="display:none;background:#1e1e2e;border:none;color:#888;font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer;">🗑 Clear all</button></div>
+        <div id="historyContent" style="margin-top:0">
             <div class="login-prompt">
                 <a onclick="openModal('login')">Login</a> or <a onclick="openModal('register')">sign up</a> to save your scan history.
             </div>
@@ -486,10 +486,15 @@
                         <div class="history-input">${scan.inputText || "-"}</div>
                         <div class="history-meta">${date}</div>
                     </div>
-                    <span class="history-badge" style="background:${c.bg};color:${c.color}">${level} ${scan.riskScore}/100</span>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                        <span class="history-badge" style="background:${c.bg};color:${c.color}">${level} ${scan.riskScore}/100</span>
+                        <button onclick="deleteScan(${scan.id})" style="background:none;border:none;color:#555;font-size:11px;cursor:pointer;padding:0;">✕ delete</button>
+                    </div>
                 </div>`;
             });
             document.getElementById("historyContent").innerHTML = html;
+            const clearBtn = document.getElementById("clearAllBtn");
+            if (clearBtn) clearBtn.style.display = "block";
         } catch(e) {
             console.error("History error", e);
         }
@@ -519,6 +524,7 @@
         if (data.error) return `<div class="error-msg">${data.error}</div>`;
         const level = getRiskLevel(data.riskLevel);
         const color = level==="HIGH"?"#f87171":level==="MEDIUM"?"#fbbf24":"#4ade80";
+        const urlVal = document.getElementById("urlInput").value;
         return `<div class="result-card">
             <span class="risk-badge risk-${level}">${data.riskLevel||"LOW"}</span>
             ${renderScoreBar(data.riskScore, color)}
@@ -528,6 +534,8 @@
                 ${data.path ? `<div class="meta-item" style="grid-column:span 2"><div class="meta-label">Path</div><div class="meta-value">${data.path}</div></div>` : ""}
             </div>
             ${renderWarnings(data.warnings)}
+            ${data.aiAnalysis ? `<div style="margin-top:12px;padding:10px;background:#0a0a1a;border-radius:8px;border-left:3px solid #4f46e5;"><div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🤖 AI Analysis</div><div style="font-size:12px;color:#ccc;line-height:1.5;">${data.aiAnalysis}</div></div>` : ""}
+            ${level !== "LOW" ? `<button onclick="reportScam('${urlVal}', 'GENERAL')" style="margin-top:12px;width:100%;padding:8px;background:#1e1e2e;border:1px solid #2a2a40;border-radius:8px;color:#888;font-size:12px;cursor:pointer;">🚩 Report this as a scam</button>` : ""}
         </div>`;
     }
 
@@ -547,6 +555,30 @@
         }
         html += "</div>";
         return html;
+    }
+
+    async function deleteScan(id) {
+        if (!token) return;
+        await fetch(API + "/history/" + id, { method: "DELETE", headers: authHeaders() });
+        loadHistory();
+    }
+
+    async function clearAllHistory() {
+        if (!token) return;
+        if (!confirm("Delete all scan history?")) return;
+        await fetch(API + "/history/all", { method: "DELETE", headers: authHeaders() });
+        loadHistory();
+    }
+
+    async function reportScam(urlOrEmail, scamType) {
+        if (!token) { openModal("login"); return; }
+        const res = await fetch(API + "/reports/report", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", ...authHeaders() },
+            body: JSON.stringify({ urlOrEmail, scamType: scamType || "GENERAL", description: "" })
+        });
+        const data = await res.json();
+        alert(data.message + (data.reportCount ? " (" + data.reportCount + " reports total)" : ""));
     }
 
     function checkPasswordStrength(pw) {

@@ -17,8 +17,6 @@ public class ScanHistoryService {
 
     public void saveScan(User user, String scanType, String inputText, String riskLevel, int riskScore) {
         if (user == null) return;
-
-        // Never save the same input twice for the same user
         final String finalInput = inputText;
         List<ScanHistory> existing = scanHistoryRepository.findByUserOrderByScannedAtDesc(user);
         boolean alreadySaved = existing.stream()
@@ -40,5 +38,18 @@ public class ScanHistoryService {
 
     public List<ScanHistory> getHistory(User user) {
         return scanHistoryRepository.findByUserOrderByScannedAtDesc(user);
+    }
+
+    public void deleteScan(Long id, User user) {
+        scanHistoryRepository.findById(id).ifPresent(scan -> {
+            if (scan.getUser().getId().equals(user.getId())) {
+                scanHistoryRepository.delete(scan);
+            }
+        });
+    }
+
+    public void deleteAll(User user) {
+        List<ScanHistory> history = scanHistoryRepository.findByUserOrderByScannedAtDesc(user);
+        scanHistoryRepository.deleteAll(history);
     }
 }
