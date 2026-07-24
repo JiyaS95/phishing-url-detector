@@ -5,6 +5,7 @@ import com.jiya.phishing_detector_api.detector.URLResult;
 import com.jiya.phishing_detector_api.detector.EmailChecker;
 import com.jiya.phishing_detector_api.detector.EmailResult;
 import com.jiya.phishing_detector_api.model.User;
+import com.jiya.phishing_detector_api.repository.ScamReportRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,17 +16,20 @@ public class PhishingService {
     private final ScanHistoryService scanHistoryService;
     private final DomainListService domainListService;
     private final WhoisService whoisService;
+    private final ScamReportRepository scamReportRepository;
 
     public PhishingService(SafeBrowsingService safeBrowsingService,
                            GeminiService geminiService,
                            ScanHistoryService scanHistoryService,
                            DomainListService domainListService,
-                           WhoisService whoisService) {
+                           WhoisService whoisService,
+                           ScamReportRepository scamReportRepository) {
         this.safeBrowsingService = safeBrowsingService;
         this.geminiService = geminiService;
         this.scanHistoryService = scanHistoryService;
         this.domainListService = domainListService;
         this.whoisService = whoisService;
+        this.scamReportRepository = scamReportRepository;
     }
 
     public URLResult analyze(String url, User user) {
@@ -54,7 +58,15 @@ public class PhishingService {
             }
         } catch (Exception ignored) {}
 
-        // Recalculate risk level after WHOIS
+        // Check community reports
+        scamReportRepository.findByUrlOrEmailValue(url).ifPresent(report -> {
+            int count = report.getReportCount();
+            result.setCommunityReports(count);
+            result.addWarning("🍁 " + count + " Canadian" + (count == 1 ? "" : "s") + " reported this as a scam");
+            result.setRiskScore(Math.min(result.getRiskScore() + (count * 10), 100));
+        });
+
+        // Recalculate risk level
         int score = result.getRiskScore();
         if (score <= 10) result.setRiskLevel("LOW 🟢");
         else if (score <= 35) result.setRiskLevel("MEDIUM 🟡");
