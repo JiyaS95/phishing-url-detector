@@ -342,7 +342,7 @@
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (data.error) { errEl.textContent = data.error; errEl.style.display = "block"; return; }
+            if (!res.ok || data.error) { errEl.textContent = data.error || "Login failed"; errEl.style.display = "block"; return; }
             token = data.token;
             currentUser = { name: data.name, email: data.email };
             localStorage.setItem("token", token);
@@ -377,7 +377,7 @@
                 body: JSON.stringify({ name, email, password })
             });
             const data = await res.json();
-            if (data.error) { errEl.textContent = data.error; errEl.style.display = "block"; return; }
+            if (!res.ok || data.error) { errEl.textContent = data.error || "Registration failed"; errEl.style.display = "block"; return; }
             token = data.token;
             currentUser = { name: data.name, email: data.email };
             localStorage.setItem("token", token);
@@ -594,10 +594,20 @@
         elN.style.color = /[0-9]/.test(pw) ? "#4ade80" : "#555";
     }
 
-    // Enter key
+    // Enter key support everywhere
     document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("urlInput").addEventListener("keydown", e => {
             if (e.key === "Enter") checkURL();
+        });
+        ["loginEmail", "loginPassword"].forEach(id => {
+            document.getElementById(id).addEventListener("keydown", e => {
+                if (e.key === "Enter") login();
+            });
+        });
+        ["registerName", "registerEmail", "registerPassword"].forEach(id => {
+            document.getElementById(id).addEventListener("keydown", e => {
+                if (e.key === "Enter") register();
+            });
         });
     });
 </script>
