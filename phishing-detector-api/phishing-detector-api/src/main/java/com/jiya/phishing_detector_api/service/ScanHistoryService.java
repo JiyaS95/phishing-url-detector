@@ -40,6 +40,12 @@ public class ScanHistoryService {
         return scanHistoryRepository.findByUserOrderByScannedAtDesc(user);
     }
 
+    public boolean existsForUser(Long id, User user) {
+        return scanHistoryRepository.findById(id)
+            .map(s -> s.getUser().getId().equals(user.getId()))
+            .orElse(false);
+    }
+
     public void deleteScan(Long id, User user) {
         scanHistoryRepository.findById(id).ifPresent(scan -> {
             if (scan.getUser().getId().equals(user.getId())) {
@@ -49,7 +55,6 @@ public class ScanHistoryService {
     }
 
     public void deleteAll(User user) {
-        List<ScanHistory> history = scanHistoryRepository.findByUserOrderByScannedAtDesc(user);
-        scanHistoryRepository.deleteAll(history);
+        scanHistoryRepository.deleteAllByUser(user);
     }
 }

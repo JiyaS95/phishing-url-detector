@@ -22,12 +22,16 @@ public class HistoryController {
     @GetMapping
     public ResponseEntity<?> getHistory(@AuthenticationPrincipal User user) {
         if (user == null) return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
-        return ResponseEntity.ok(scanHistoryService.getHistory(user));
+        List<ScanHistory> history = scanHistoryService.getHistory(user);
+        return ResponseEntity.ok(history);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteScan(@PathVariable Long id, @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> deleteScan(@PathVariable Long id,
+                                        @AuthenticationPrincipal User user) {
         if (user == null) return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
+        boolean exists = scanHistoryService.existsForUser(id, user);
+        if (!exists) return ResponseEntity.status(404).body(Map.of("error", "Scan not found"));
         scanHistoryService.deleteScan(id, user);
         return ResponseEntity.ok(Map.of("message", "Deleted"));
     }
@@ -35,6 +39,8 @@ public class HistoryController {
     @DeleteMapping("/all")
     public ResponseEntity<?> deleteAll(@AuthenticationPrincipal User user) {
         if (user == null) return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
+        List<ScanHistory> history = scanHistoryService.getHistory(user);
+        if (history.isEmpty()) return ResponseEntity.ok(Map.of("message", "Nothing to delete"));
         scanHistoryService.deleteAll(user);
         return ResponseEntity.ok(Map.of("message", "All history cleared"));
     }
