@@ -12,6 +12,7 @@ public class URLResult {
     private String error;
     private String riskLevel;
     private String aiAnalysis;
+    private String domainAge;
 
     public void setProtocol (String protocol) {
         this.protocol = protocol;
@@ -66,6 +67,8 @@ public class URLResult {
     }
     public void setAiAnalysis(String aiAnalysis) { this.aiAnalysis = aiAnalysis; }
     public String getAiAnalysis() { return aiAnalysis; }
+    public void setDomainAge(String domainAge) { this.domainAge = domainAge; }
+    public String getDomainAge() { return domainAge; }
     
 
     
