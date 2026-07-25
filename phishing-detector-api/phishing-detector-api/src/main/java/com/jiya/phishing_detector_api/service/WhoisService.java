@@ -16,7 +16,9 @@ public class WhoisService {
     private final WebClient webClient = WebClient.create("https://www.whoisxmlapi.com");
 
     public WhoisResult checkDomain(String domain) {
-        try {
+        // WHOIS API trial ended — disabled to prevent errors
+        return null;
+        /*
             Map response = webClient.get()
                 .uri("/whoisserver/WhoisService?apiKey=" + apiKey + "&domainName=" + domain + "&outputFormat=JSON")
                 .retrieve()
@@ -47,6 +49,7 @@ public class WhoisService {
             System.out.println("WHOIS error: " + e.getMessage());
             return null;
         }
+        */
     }
 
     public static class WhoisResult {
