@@ -41,6 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(user, null, List.of());
                         auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(auth);
+                        request.setAttribute("user", user);
                     });
                 }
                 // If token is invalid, just continue without auth - don't reject
