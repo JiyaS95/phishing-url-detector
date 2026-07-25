@@ -15,4 +15,5 @@ public interface ScanHistoryRepository extends JpaRepository<ScanHistory, Long> 
     @Transactional
     @Query("DELETE FROM ScanHistory s WHERE s.user = :user")
     void deleteAllByUser(User user);
+    long countByUser(com.jiya.phishing_detector_api.model.User user);
 }

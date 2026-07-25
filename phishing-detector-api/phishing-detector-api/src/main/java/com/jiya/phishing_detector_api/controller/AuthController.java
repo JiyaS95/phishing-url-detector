@@ -8,8 +8,10 @@ import com.jiya.phishing_detector_api.security.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import java.util.Map;
 import java.util.Optional;
+import com.jiya.phishing_detector_api.repository.ScanHistoryRepository;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,12 +21,16 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    private final ScanHistoryRepository scanHistoryRepository;
+
     public AuthController(UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
-                          JwtUtil jwtUtil) {
+                          JwtUtil jwtUtil,
+                          ScanHistoryRepository scanHistoryRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.scanHistoryRepository = scanHistoryRepository;
     }
 
     @PostMapping("/register")
@@ -69,9 +75,34 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> me(@RequestAttribute(required = false) User user) {
         if (user == null) return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
+        long totalScans = scanHistoryRepository.countByUser(user);
         return ResponseEntity.ok(Map.of(
             "name", user.getName(),
-            "email", user.getEmail()
+            "email", user.getEmail(),
+            "totalScans", totalScans,
+            "memberSince", user.getCreatedAt() != null ? user.getCreatedAt().toString().substring(0, 10) : "N/A"
         ));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestAttribute(required = false) User user,
+                                             @RequestBody Map<String, String> body) {
+        if (user == null) return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
+        String current = body.get("currentPassword");
+        String newPass = body.get("newPassword");
+        if (!passwordEncoder.matches(current, user.getPassword()))
+            return ResponseEntity.badRequest().body(Map.of("error", "Current password is incorrect"));
+        if (newPass == null || newPass.length() < 8)
+            return ResponseEntity.badRequest().body(Map.of("error", "New password must be at least 8 characters"));
+        user.setPassword(passwordEncoder.encode(newPass));
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+    }
+
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount(@RequestAttribute(required = false) User user) {
+        if (user == null) return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
+        userRepository.delete(user);
+        return ResponseEntity.ok(Map.of("message", "Account deleted"));
     }
 }
