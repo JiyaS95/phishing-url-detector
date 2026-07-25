@@ -273,14 +273,18 @@
             <button class="tab" data-tab="profile" id="profileTab" onclick="switchTab('profile')" style="display:none">👤 Profile</button>
         </div>
         <div id="tab-url" class="tab-content active">
-            <div class="input-row">
-                <input type="text" id="urlInput" placeholder="https://example.com">
+            <div class="input-row" style="position:relative;">
+                <input type="text" id="urlInput" placeholder="https://example.com" style="padding-right:36px;">
+                <span onclick="document.getElementById('urlInput').value=''" style="position:absolute;right:120px;top:50%;transform:translateY(-50%);cursor:pointer;color:#555;font-size:16px;z-index:1;">✕</span>
                 <button class="analyze-btn" onclick="checkURL()">Analyze</button>
             </div>
             <div id="urlResult"></div>
         </div>
         <div id="tab-email" class="tab-content">
-            <textarea id="emailInput" placeholder="Paste email content here..."></textarea>
+            <div style="position:relative;">
+                <textarea id="emailInput" placeholder="Paste email content here..." style="padding-right:36px;"></textarea>
+                <span onclick="document.getElementById('emailInput').value=''" style="position:absolute;right:12px;top:12px;cursor:pointer;color:#555;font-size:16px;">✕</span>
+            </div>
             <button class="analyze-btn full-btn" onclick="checkEmail()">Analyze Email</button>
             <div id="emailResult"></div>
         </div>
@@ -526,7 +530,7 @@
             if (res.status === 403) { handle403(); return; }
             const data = await res.json();
             document.getElementById("urlResult").innerHTML = renderUrlResult(data);
-            if (token) loadHistory();
+            if (token) setTimeout(loadHistory, 500);
         } catch(e) {
             document.getElementById("urlResult").innerHTML = '<div class="error-msg">Could not reach backend. Try again in a moment.</div>';
         }
@@ -545,7 +549,7 @@
             });
             const data = await res.json();
             document.getElementById("emailResult").innerHTML = renderEmailResult(data);
-            if (token) loadHistory();
+            if (token) setTimeout(loadHistory, 500);
         } catch(e) {
             document.getElementById("emailResult").innerHTML = '<div class="error-msg">Could not reach backend.</div>';
         }
