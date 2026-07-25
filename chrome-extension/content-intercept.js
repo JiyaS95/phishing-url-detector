@@ -32,6 +32,8 @@ function showWarningPage(url, result) {
     align-items: center;
     justify-content: center;
     font-family: Arial, sans-serif;
+    overflow-y: auto;
+    padding: 20px;
   `;
 
   const colors = {
@@ -53,7 +55,7 @@ function showWarningPage(url, result) {
     : '';
 
   overlay.innerHTML = `
-    <div style="max-width:520px;width:90%;background:#13131f;border:2px solid ${c.border};border-radius:16px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.8);">
+    <div style="max-width:520px;width:90%;background:#13131f;border:2px solid ${c.border};border-radius:16px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.8);margin:auto;">
       <div style="font-size:48px;text-align:center;margin-bottom:16px;">⚠️</div>
       <h1 style="color:${c.text};font-size:22px;font-weight:800;text-align:center;margin-bottom:8px;">
         ${result.level === 'HIGH' ? 'Dangerous Link Blocked' : 'Suspicious Link Warning'}
@@ -78,7 +80,7 @@ function showWarningPage(url, result) {
           Continue Anyway
         </button>
       </div>
-      <p style="color:#333;font-size:11px;text-align:center;margin-top:12px;">Powered by Phishing Detector 🛡️</p>
+      <p style="color:#333;font-size:11px;text-align:center;margin-top:12px;">Powered by Alurtra 🛡️</p>
     </div>
   `;
 

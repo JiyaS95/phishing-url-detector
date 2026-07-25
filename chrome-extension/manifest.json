@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Phishing Detector",
+  "name": "Alurtra",
   "version": "1.0",
-  "description": "Detects phishing URLs in Google Search and Gmail",
+  "description": "Alurtra — Real-time phishing & scam protection for Canadians",
   "permissions": [
     "activeTab",
     "scripting",
