@@ -45,7 +45,8 @@ public class SecurityConfig {
                     "/**/*.png",
                     "/**/*.ico",
                     "/google*.html",
-                    "/**/*.html"
+                    "/**/*.html",
+                    "/sitemap.xml"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
