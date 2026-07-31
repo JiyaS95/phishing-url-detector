@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alurtra — Phishing & Scam Detector</title>
-    <link rel="icon" type="image/png" href="/images/logo2.png">
+    <link rel="icon" type="image/png" href="/images/logo3.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oldenburg&display=swap" rel="stylesheet">
@@ -228,9 +228,11 @@
 
 <!-- NAV -->
 <nav>
-    <div class="nav-logo" style="display:flex;align-items:center;gap:8px;"><img src="/images/logo2.png" alt="Alurtra logo" style="height:32px;width:32px;object-fit:contain;"> Alurtra</div>
+    <div class="nav-logo" style="display:flex;align-items:center;gap:8px;"><img src="/images/logo3.png" alt="Alurtra logo" style="height:32px;width:32px;object-fit:contain;"> Alurtra</div>
     <div class="nav-right">
         <span class="nav-user" id="navUser"></span>
+        <button class="btn-sm btn-ghost" onclick="switchTab('history')">📋 History</button>
+        <button class="btn-sm btn-ghost" onclick="switchTab('faq')">❓ FAQ</button>
         <button class="btn-sm btn-ghost" id="btnLogin" onclick="openModal('login')">Login</button>
         <button class="btn-sm btn-primary" id="btnRegister" onclick="openModal('register')">Sign Up</button>
         <button class="btn-sm btn-danger" id="btnLogout" onclick="logout()" style="display:none">Logout</button>
@@ -286,7 +288,7 @@
 
 <div class="main">
     <div class="header">
-        <img src="/images/logo2.png" alt="Alurtra logo" style="height:80px;width:80px;object-fit:contain;margin-bottom:12px;">
+        <img src="/images/logo3.png" alt="Alurtra logo" style="height:80px;width:80px;object-fit:contain;margin-bottom:12px;">
         <h1>Alurtra</h1>
         <p class="subtitle">Check any URL or email for phishing indicators and risk assessment</p>
     </div>
@@ -295,8 +297,6 @@
         <div class="tabs">
             <button class="tab active" data-tab="url" onclick="switchTab('url')">🔗 URL Check</button>
             <button class="tab" data-tab="email" onclick="switchTab('email')">📧 Email Check</button>
-            <button class="tab" data-tab="history" onclick="switchTab('history')">📋 History</button>
-            <button class="tab" data-tab="faq" onclick="switchTab('faq')">❓ FAQ</button>
             <button class="tab" data-tab="profile" id="profileTab" onclick="switchTab('profile')" style="display:none">👤 Profile</button>
         </div>
         <div id="tab-url" class="tab-content active">
@@ -377,6 +377,7 @@
         document.querySelector("[data-tab='" + tab + "']").classList.add("active");
         if (tab === "profile") loadProfile();
         if (tab === "history") loadHistory();
+        document.querySelector(".box").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     // Modal
