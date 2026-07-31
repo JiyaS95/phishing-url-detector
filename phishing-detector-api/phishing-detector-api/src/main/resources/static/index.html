@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alurtra — Phishing & Scam Detector</title>
-    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="icon" type="image/png" href="/images/logo2.png">
     <meta name="description" content="Alurtra is a free phishing and scam detector built for Canadians. Check any URL or email instantly for phishing indicators, malware, and scam risk using Google Safe Browsing, URLhaus, and AI analysis.">
     <meta property="og:title" content="Alurtra — Phishing & Scam Detector">
     <meta property="og:description" content="Free phishing and scam detection for Canadians. Analyze URLs and emails in real-time before you click.">
@@ -129,11 +129,11 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             margin-bottom: 24px;
         }
-        .tabs { display: flex; gap: 8px; margin-bottom: 28px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
         .tab {
-            flex: 1; padding: 10px; border: none; border-radius: 10px;
+            flex: 1 1 auto; min-width: 110px; padding: 10px; border: none; border-radius: 10px;
             background: #1e1e2e; color: #888; cursor: pointer;
-            font-size: 14px; font-weight: 600; transition: all 0.2s;
+            font-size: 13px; font-weight: 600; transition: all 0.2s;
         }
         .tab.active { background: #4f46e5; color: #fff; }
         .tab-content { display: none; }
@@ -225,7 +225,7 @@
 
 <!-- NAV -->
 <nav>
-    <div class="nav-logo" style="display:flex;align-items:center;gap:8px;"><img src="/images/logo.png" alt="Alurtra logo" style="height:32px;width:32px;object-fit:contain;"> Alurtra</div>
+    <div class="nav-logo" style="display:flex;align-items:center;gap:8px;"><img src="/images/logo2.png" alt="Alurtra logo" style="height:32px;width:32px;object-fit:contain;"> Alurtra</div>
     <div class="nav-right">
         <span class="nav-user" id="navUser"></span>
         <button class="btn-sm btn-ghost" id="btnLogin" onclick="openModal('login')">Login</button>
@@ -283,7 +283,7 @@
 
 <div class="main">
     <div class="header">
-        <img src="/images/logo.png" alt="Alurtra logo" style="height:80px;width:80px;object-fit:contain;margin-bottom:12px;">
+        <img src="/images/logo2.png" alt="Alurtra logo" style="height:80px;width:80px;object-fit:contain;margin-bottom:12px;">
         <h1>Alurtra</h1>
         <p class="subtitle">Check any URL or email for phishing indicators and risk assessment</p>
     </div>
@@ -292,6 +292,8 @@
         <div class="tabs">
             <button class="tab active" data-tab="url" onclick="switchTab('url')">🔗 URL Check</button>
             <button class="tab" data-tab="email" onclick="switchTab('email')">📧 Email Check</button>
+            <button class="tab" data-tab="history" onclick="switchTab('history')">📋 History</button>
+            <button class="tab" data-tab="faq" onclick="switchTab('faq')">❓ FAQ</button>
             <button class="tab" data-tab="profile" id="profileTab" onclick="switchTab('profile')" style="display:none">👤 Profile</button>
         </div>
         <div id="tab-url" class="tab-content active">
@@ -316,35 +318,35 @@
                 <div class="loading" style="text-align:center;padding:20px;color:#666;">Loading profile...</div>
             </div>
         </div>
-    </div>
 
-    <div class="history-box">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><h2 style="margin:0">📋 Scan History</h2><button id="clearAllBtn" onclick="clearAllHistory()" style="display:none;background:#1e1e2e;border:none;color:#888;font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer;">🗑 Clear all</button></div>
-        <div id="historyContent" style="margin-top:0">
-            <div class="login-prompt">
-                <a onclick="openModal('login')">Login</a> or <a onclick="openModal('register')">sign up</a> to save your scan history.
+        <div id="tab-history" class="tab-content">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><h2 style="margin:0">📋 Scan History</h2><button id="clearAllBtn" onclick="clearAllHistory()" style="display:none;background:#1e1e2e;border:none;color:#888;font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer;">🗑 Clear all</button></div>
+            <div id="historyContent" style="margin-top:0">
+                <div class="login-prompt">
+                    <a onclick="openModal('login')">Login</a> or <a onclick="openModal('register')">sign up</a> to save your scan history.
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="history-box" style="margin-top:24px;">
-        <h2 style="margin-bottom:20px;">❓ Frequently Asked Questions</h2>
-        <div style="display:flex;flex-direction:column;gap:16px;">
-            <div>
-                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">What is Alurtra?</div>
-                <div style="font-size:13px;color:#999;line-height:1.6;">Alurtra is a free phishing and scam detector built for Canadians. It checks URLs and emails against known threat databases and AI analysis to flag suspicious links before you click them.</div>
-            </div>
-            <div>
-                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">How does the phishing detector work?</div>
-                <div style="font-size:13px;color:#999;line-height:1.6;">Alurtra analyzes a URL's structure (domain age, subdomain patterns, HTTPS usage, and more), cross-references it against Google Safe Browsing and URLhaus malware databases, and uses AI to assess context. Each check returns a risk score from 0–100 with a LOW, MEDIUM, or HIGH rating.</div>
-            </div>
-            <div>
-                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">Can Alurtra check emails too?</div>
-                <div style="font-size:13px;color:#999;line-height:1.6;">Yes. Alurtra scans email content for urgency language, financial fraud indicators, personal information harvesting attempts, and Canadian-specific scam patterns involving organizations like the CRA, OSAP, and major banks.</div>
-            </div>
-            <div>
-                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">Is Alurtra free to use?</div>
-                <div style="font-size:13px;color:#999;line-height:1.6;">Yes, Alurtra is completely free. You can check URLs and emails without an account, and sign up for free to save your scan history.</div>
+        <div id="tab-faq" class="tab-content">
+            <h2 style="margin-bottom:20px;">❓ Frequently Asked Questions</h2>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div>
+                    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">What is Alurtra?</div>
+                    <div style="font-size:13px;color:#999;line-height:1.6;">Alurtra is a free phishing and scam detector built for Canadians. It checks URLs and emails against known threat databases and AI analysis to flag suspicious links before you click them.</div>
+                </div>
+                <div>
+                    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">How does the phishing detector work?</div>
+                    <div style="font-size:13px;color:#999;line-height:1.6;">Alurtra analyzes a URL's structure (domain age, subdomain patterns, HTTPS usage, and more), cross-references it against Google Safe Browsing and URLhaus malware databases, and uses AI to assess context. Each check returns a risk score from 0–100 with a LOW, MEDIUM, or HIGH rating.</div>
+                </div>
+                <div>
+                    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">Can Alurtra check emails too?</div>
+                    <div style="font-size:13px;color:#999;line-height:1.6;">Yes. Alurtra scans email content for urgency language, financial fraud indicators, personal information harvesting attempts, and Canadian-specific scam patterns involving organizations like the CRA, OSAP, and major banks.</div>
+                </div>
+                <div>
+                    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">Is Alurtra free to use?</div>
+                    <div style="font-size:13px;color:#999;line-height:1.6;">Yes, Alurtra is completely free. You can check URLs and emails without an account, and sign up for free to save your scan history.</div>
+                </div>
             </div>
         </div>
     </div>
@@ -371,6 +373,7 @@
         document.getElementById("tab-" + tab).classList.add("active");
         document.querySelector("[data-tab='" + tab + "']").classList.add("active");
         if (tab === "profile") loadProfile();
+        if (tab === "history") loadHistory();
     }
 
     // Modal
