@@ -167,7 +167,7 @@ async function scanEmail() {
     const data = await res.json();
     showBanner(data);
   } catch (e) {
-    alert('Could not reach Phishing Detector backend.');
+    alert('Could not reach Alurtra backend.');
   } finally {
     const btn = document.getElementById('phish-toggle-btn');
     if (btn) btn.disabled = false;

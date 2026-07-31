@@ -1,4 +1,4 @@
-# 🛡️ Phishing Detector
+# 🛡️ Alurtra
 
 A phishing detection tool built in Java that analyzes URLs and emails for suspicious patterns and shows users a clear risk assessment. This project started as a simple URL checker and evolved into a full web app with a Chrome extension for real-time protection while browsing.
 
