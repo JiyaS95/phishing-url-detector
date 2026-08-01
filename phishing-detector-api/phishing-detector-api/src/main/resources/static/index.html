@@ -93,7 +93,7 @@
             border: 1px solid #1e1e32;
             border-radius: 16px;
             padding: 32px;
-            width: 400px;
+            width: min(400px, 90vw);
             position: relative;
         }
         .modal h2 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 24px; }
@@ -127,8 +127,8 @@
             background: #13131f;
             border: 1px solid #1e1e32;
             border-radius: 16px;
-            padding: 40px;
-            width: 620px;
+            padding: min(40px, 6vw);
+            width: min(620px, 92vw);
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             margin-bottom: 24px;
         }
@@ -202,7 +202,7 @@
         /* HISTORY */
         .history-box {
             background: #13131f; border: 1px solid #1e1e32;
-            border-radius: 16px; padding: 32px; width: 620px;
+            border-radius: 16px; padding: min(32px, 6vw); width: min(620px, 92vw);
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
         .history-box h2 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; }
@@ -416,7 +416,7 @@
     updateNav();
     if (token) loadHistory();
 
-    function showPage(page) {
+    function showPage(page, skipPush) {
         document.getElementById('page-home').style.display = page === 'home' ? 'flex' : 'none';
         document.getElementById('page-history').style.display = page === 'history' ? 'flex' : 'none';
         document.getElementById('page-faq').style.display = page === 'faq' ? 'flex' : 'none';
@@ -425,7 +425,29 @@
         if (page === 'history') loadHistory();
         if (page === 'community') loadCommunityScams();
         window.scrollTo({top: 0, behavior: 'smooth'});
+
+        const paths = { home: '/', history: '/history', faq: '/faq', community: '/community', feedback: '/feedback' };
+        const titles = { home: 'Alurtra — Phishing & Scam Detector', history: 'Scan History — Alurtra', faq: 'FAQ — Alurtra', community: 'Community Reported Scams — Alurtra', feedback: 'Feedback — Alurtra' };
+        document.title = titles[page] || titles.home;
+        if (!skipPush) {
+            history.pushState({ page }, '', paths[page] || '/');
+        }
     }
+
+    window.addEventListener('popstate', (e) => {
+        const page = (e.state && e.state.page) || pageFromPath(window.location.pathname);
+        showPage(page, true);
+    });
+
+    function pageFromPath(path) {
+        if (path.startsWith('/history')) return 'history';
+        if (path.startsWith('/faq')) return 'faq';
+        if (path.startsWith('/community')) return 'community';
+        if (path.startsWith('/feedback')) return 'feedback';
+        return 'home';
+    }
+
+    showPage(pageFromPath(window.location.pathname), true);
 
     async function loadCommunityScams() {
         const container = document.getElementById('communityContent');

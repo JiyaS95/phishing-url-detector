@@ -36,7 +36,9 @@ public class DomainListService {
                 {"bmo.com", "BMO"},
                 {"rogers.com", "Rogers Communications"},
                 {"bell.ca", "Bell Canada"},
-                {"telus.com", "Telus"}
+                {"telus.com", "Telus"},
+                {"alurtra.linkpc.net", "Alurtra - our own site"},
+                {"www.alurtra.linkpc.net", "Alurtra - our own site"}
             };
             for (String[] entry : whitelist) {
                 DomainList d = new DomainList();

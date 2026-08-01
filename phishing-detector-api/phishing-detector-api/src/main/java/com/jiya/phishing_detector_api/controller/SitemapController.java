@@ -18,6 +18,16 @@ public class SitemapController {
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://www.alurtra.linkpc.net/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.alurtra.linkpc.net/community</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
 """;
         return ResponseEntity.ok()
