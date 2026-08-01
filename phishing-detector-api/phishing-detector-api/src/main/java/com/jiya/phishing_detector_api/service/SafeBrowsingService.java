@@ -36,6 +36,7 @@ public class SafeBrowsingService {
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(Map.class)
+                .timeout(java.time.Duration.ofSeconds(4))
                 .block();
             return response != null && response.containsKey("matches");
         } catch (Exception e) {
@@ -54,6 +55,7 @@ public class SafeBrowsingService {
                 .bodyValue(formBody)
                 .retrieve()
                 .bodyToMono(Map.class)
+                .timeout(java.time.Duration.ofSeconds(4))
                 .block();
 
             if (response == null) return false;

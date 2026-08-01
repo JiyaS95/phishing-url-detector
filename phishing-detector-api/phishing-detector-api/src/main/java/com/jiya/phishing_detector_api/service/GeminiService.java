@@ -24,10 +24,11 @@ public class GeminiService {
             );
 
             Map response = webClient.post()
-                .uri("/v1beta/models/gemini-3.1-flash-lite:generateContent?key=" + apiKey)
+                .uri("/v1beta/models/gemini-3.5-flash-lite:generateContent?key=" + apiKey)
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(Map.class)
+                .timeout(java.time.Duration.ofSeconds(8))
                 .block();
 
             if (response == null) return null;
@@ -52,18 +53,21 @@ public class GeminiService {
         return callGemini(prompt);
     }
 
-    public String analyzeUrl(String url, URLResult result) {
-        // Only call Gemini if there are warnings or high risk
-        if (result.getRiskScore() == 0 && (result.getWarnings() == null || result.getWarnings().isEmpty())) {
+    public String analyzeUrl(String url, int riskScore, java.util.List<String> warningsList) {
+        if (riskScore == 0 && (warningsList == null || warningsList.isEmpty())) {
             return null;
         }
-        String warnings = result.getWarnings() != null ? String.join(", ", result.getWarnings()) : "none";
+        String warnings = warningsList != null ? String.join(", ", warningsList) : "none";
         String prompt = "You are a cybersecurity expert. Analyze this URL for phishing risk and explain in plain English. " +
             "Be concise — 2 sentences max. Start with SAFE, SUSPICIOUS, or DANGEROUS. " +
             "URL: " + url + ". " +
             "Detected warnings: " + warnings + ". " +
-            "Risk score: " + result.getRiskScore() + "/100. " +
+            "Risk score: " + riskScore + "/100. " +
             "Focus on Canadian users — mention if it impersonates Canadian banks, CRA, OSAP, Rogers, Bell, or Telus.";
         return callGemini(prompt);
+    }
+
+    public String analyzeUrl(String url, URLResult result) {
+        return analyzeUrl(url, result.getRiskScore(), result.getWarnings());
     }
 }

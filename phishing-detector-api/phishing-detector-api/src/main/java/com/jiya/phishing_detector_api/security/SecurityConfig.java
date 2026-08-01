@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/auth/**",
                     "/check",
+                    "/check/ai",
                     "/check-email",
                     "/reports/**",
                     "/feedback",
