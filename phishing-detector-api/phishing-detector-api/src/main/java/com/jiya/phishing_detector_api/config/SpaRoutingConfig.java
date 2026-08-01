@@ -8,9 +8,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SpaRoutingConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/history").setViewName("forward:/index.html");
+        registry.addViewController("/scan-history").setViewName("forward:/index.html");
         registry.addViewController("/faq").setViewName("forward:/index.html");
         registry.addViewController("/community").setViewName("forward:/index.html");
-        registry.addViewController("/feedback").setViewName("forward:/index.html");
+        registry.addViewController("/feedback-form").setViewName("forward:/index.html");
     }
 }

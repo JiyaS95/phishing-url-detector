@@ -23,6 +23,15 @@ public class AuthController {
 
     private final ScanHistoryRepository scanHistoryRepository;
 
+    private static final java.util.Set<String> DISPOSABLE_EMAIL_DOMAINS = java.util.Set.of(
+        "mailinator.com", "10minutemail.com", "guerrillamail.com", "yopmail.com",
+        "tempmail.com", "temp-mail.org", "throwawaymail.com", "getnada.com",
+        "maildrop.cc", "trashmail.com", "fakeinbox.com", "sharklasers.com",
+        "dispostable.com", "mintemail.com", "mailnesia.com", "spamgourmet.com",
+        "mytemp.email", "moakt.com", "emailondeck.com", "mohmal.com",
+        "tempinbox.com", "burnermail.io", "harakirimail.com", "mailcatch.com"
+    );
+
     public AuthController(UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
                           JwtUtil jwtUtil,
@@ -42,6 +51,10 @@ public class AuthController {
         }
         if (userRepository.existsByEmail(req.getEmail())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email already registered"));
+        }
+        String emailDomain = req.getEmail().substring(req.getEmail().indexOf('@') + 1).toLowerCase();
+        if (DISPOSABLE_EMAIL_DOMAINS.contains(emailDomain)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Please use a permanent email address, not a temporary/disposable one"));
         }
         User user = new User();
         user.setName(req.getName());
@@ -63,6 +76,9 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Email and password are required"));
         }
         Optional<User> userOpt = userRepository.findByEmail(req.getEmail());
+        if (userOpt.isEmpty() || !passwordEncoder.matches(req.getPassword(), userOpt.get().getPassword())) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid email or password"));
+        }
         User user = userOpt.get();
         String token = jwtUtil.generateToken(user.getEmail());
         return ResponseEntity.ok(Map.of(

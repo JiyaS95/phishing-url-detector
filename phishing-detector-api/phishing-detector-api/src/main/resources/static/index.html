@@ -231,10 +231,10 @@
     <div class="nav-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="showPage('home')"><img src="/images/logo3.png" alt="Alurtra logo" style="height:32px;width:32px;object-fit:contain;"> Alurtra</div>
     <div class="nav-right">
         <span class="nav-user" id="navUser"></span>
-        <button class="btn-sm btn-ghost" onclick="showPage('community')">🚩 Community</button>
-        <button class="btn-sm btn-ghost" onclick="showPage('history')">📋 History</button>
-        <button class="btn-sm btn-ghost" onclick="showPage('faq')">❓ FAQ</button>
-        <button class="btn-sm btn-ghost" onclick="showPage('feedback')">💬 Feedback</button>
+        <button class="btn-sm btn-ghost" onclick="showPage('community')">Community</button>
+        <button class="btn-sm btn-ghost" onclick="showPage('history')">History</button>
+        <button class="btn-sm btn-ghost" onclick="showPage('faq')">FAQ</button>
+        <button class="btn-sm btn-ghost" onclick="showPage('feedback')">Feedback</button>
         <button class="btn-sm btn-ghost" id="btnLogin" onclick="openModal('login')">Login</button>
         <button class="btn-sm btn-primary" id="btnRegister" onclick="openModal('register')">Sign Up</button>
         <button class="btn-sm btn-danger" id="btnLogout" onclick="logout()" style="display:none">Logout</button>
@@ -304,7 +304,7 @@
         <div id="tab-url" class="tab-content active">
             <div class="input-row" style="position:relative;">
                 <input type="text" id="urlInput" placeholder="https://example.com" style="padding-right:36px;">
-                <span onclick="document.getElementById('urlInput').value=''" style="position:absolute;right:120px;top:50%;transform:translateY(-50%);cursor:pointer;color:#555;font-size:16px;z-index:1;">✕</span>
+                <span onclick="clearUrlInput()" style="position:absolute;right:120px;top:50%;transform:translateY(-50%);cursor:pointer;color:#555;font-size:16px;z-index:1;">✕</span>
                 <button class="analyze-btn" onclick="checkURL()">Analyze</button>
             </div>
             <div id="urlResult"></div>
@@ -426,7 +426,7 @@
         if (page === 'community') loadCommunityScams();
         window.scrollTo({top: 0, behavior: 'smooth'});
 
-        const paths = { home: '/', history: '/history', faq: '/faq', community: '/community', feedback: '/feedback' };
+        const paths = { home: '/', history: '/scan-history', faq: '/faq', community: '/community', feedback: '/feedback-form' };
         const titles = { home: 'Alurtra — Phishing & Scam Detector', history: 'Scan History — Alurtra', faq: 'FAQ — Alurtra', community: 'Community Reported Scams — Alurtra', feedback: 'Feedback — Alurtra' };
         document.title = titles[page] || titles.home;
         if (!skipPush) {
@@ -440,10 +440,10 @@
     });
 
     function pageFromPath(path) {
-        if (path.startsWith('/history')) return 'history';
+        if (path.startsWith('/scan-history')) return 'history';
         if (path.startsWith('/faq')) return 'faq';
         if (path.startsWith('/community')) return 'community';
-        if (path.startsWith('/feedback')) return 'feedback';
+        if (path.startsWith('/feedback-form')) return 'feedback';
         return 'home';
     }
 
@@ -714,19 +714,37 @@
     }
 
     // URL Check
+    let currentUrlCheckController = null;
+
     async function checkURL() {
         const url = document.getElementById("urlInput").value;
         if (!url) return;
+
+        if (currentUrlCheckController) {
+            currentUrlCheckController.abort();
+        }
+        currentUrlCheckController = new AbortController();
+        const thisController = currentUrlCheckController;
+
         document.getElementById("urlResult").innerHTML = '<div class="loading">Analyzing...</div>';
         try {
-            const res = await fetch(API + "/check?url=" + encodeURIComponent(url), { headers: authHeaders() });
+            const res = await fetch(API + "/check?url=" + encodeURIComponent(url), { headers: authHeaders(), signal: thisController.signal });
             if (res.status === 403) { handle403(); return; }
             const data = await res.json();
             document.getElementById("urlResult").innerHTML = renderUrlResult(data);
             if (token) setTimeout(loadHistory, 500);
         } catch(e) {
+            if (e.name === "AbortError") return;
             document.getElementById("urlResult").innerHTML = '<div class="error-msg">Could not reach backend. Try again in a moment.</div>';
         }
+    }
+
+    function clearUrlInput() {
+        document.getElementById("urlInput").value = "";
+        if (currentUrlCheckController) {
+            currentUrlCheckController.abort();
+        }
+        document.getElementById("urlResult").innerHTML = "";
     }
 
     // Email Check
