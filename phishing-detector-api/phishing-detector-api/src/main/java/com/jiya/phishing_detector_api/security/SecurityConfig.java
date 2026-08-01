@@ -38,6 +38,7 @@ public class SecurityConfig {
                     "/check",
                     "/check-email",
                     "/reports/**",
+                    "/feedback",
                     "/",
                     "/index.html",
                     "/**/*.css",

@@ -1,6 +1,7 @@
 package com.jiya.phishing_detector_api.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,6 +32,7 @@ public class ScamReport {
 
     @ManyToOne
     @JoinColumn(name = "reported_by")
+    @JsonIgnore
     private User reportedBy;
 
     public Long getId() { return id; }
