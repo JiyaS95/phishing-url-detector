@@ -235,6 +235,7 @@
         <button class="btn-sm btn-ghost" onclick="showPage('history')">History</button>
         <button class="btn-sm btn-ghost" onclick="showPage('faq')">FAQ</button>
         <button class="btn-sm btn-ghost" onclick="showPage('feedback')">Feedback</button>
+        <button class="btn-sm btn-ghost" onclick="showPage('extension')">Extension</button>
         <button class="btn-sm btn-ghost" id="btnLogin" onclick="openModal('login')">Login</button>
         <button class="btn-sm btn-primary" id="btnRegister" onclick="openModal('register')">Sign Up</button>
         <button class="btn-sm btn-danger" id="btnLogout" onclick="logout()" style="display:none">Logout</button>
@@ -403,6 +404,41 @@
         </div>
     </div>
 </div>
+<div id="page-extension" class="main" style="display:none;padding-top:70px;">
+    <div class="header" style="margin-bottom:16px;">
+        <h1 style="font-size:38px;">Get the Extension</h1>
+    </div>
+    <div class="box" style="width:620px;">
+        <div style="font-size:13px;color:#999;line-height:1.6;margin-bottom:20px;">
+            Install the Alurtra Chrome extension to get risk badges on Google search results, a floating "Scan Email" button in Gmail/Outlook/Yahoo Mail, and full-page warnings before you click a dangerous link — anywhere on the web.
+        </div>
+        <a href="/download/extension.zip" download="alurtra-extension.zip" style="text-decoration:none;">
+            <button class="btn-sm btn-primary" style="width:100%;padding:12px;font-size:14px;">Download Extension (.zip)</button>
+        </a>
+        <div style="margin-top:24px;display:flex;flex-direction:column;gap:14px;">
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">1. Unzip the downloaded file</div>
+                <div style="font-size:13px;color:#999;line-height:1.6;">Extract the .zip somewhere you won't move or delete it — Chrome loads the extension directly from this folder.</div>
+            </div>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">2. Open Chrome extensions page</div>
+                <div style="font-size:13px;color:#999;line-height:1.6;">Go to <code>chrome://extensions</code> in your address bar.</div>
+            </div>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">3. Enable Developer Mode</div>
+                <div style="font-size:13px;color:#999;line-height:1.6;">Toggle "Developer mode" on in the top-right corner of the extensions page.</div>
+            </div>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">4. Click "Load unpacked"</div>
+                <div style="font-size:13px;color:#999;line-height:1.6;">Select the unzipped folder from step 1.</div>
+            </div>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">5. Done!</div>
+                <div style="font-size:13px;color:#999;line-height:1.6;">Alurtra now appears in your extensions bar and is protecting you automatically.</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     const API = "";
@@ -422,12 +458,13 @@
         document.getElementById('page-faq').style.display = page === 'faq' ? 'flex' : 'none';
         document.getElementById('page-community').style.display = page === 'community' ? 'flex' : 'none';
         document.getElementById('page-feedback').style.display = page === 'feedback' ? 'flex' : 'none';
+        document.getElementById('page-extension').style.display = page === 'extension' ? 'flex' : 'none';
         if (page === 'history') loadHistory();
         if (page === 'community') loadCommunityScams();
         window.scrollTo({top: 0, behavior: 'smooth'});
 
-        const paths = { home: '/', history: '/scan-history', faq: '/faq', community: '/community', feedback: '/feedback-form' };
-        const titles = { home: 'Alurtra — Phishing & Scam Detector', history: 'Scan History — Alurtra', faq: 'FAQ — Alurtra', community: 'Community Reported Scams — Alurtra', feedback: 'Feedback — Alurtra' };
+        const paths = { home: '/', history: '/scan-history', faq: '/faq', community: '/community', feedback: '/feedback-form', extension: '/extension' };
+        const titles = { home: 'Alurtra — Phishing & Scam Detector', history: 'Scan History — Alurtra', faq: 'FAQ — Alurtra', community: 'Community Reported Scams — Alurtra', feedback: 'Feedback — Alurtra', extension: 'Get the Extension — Alurtra' };
         document.title = titles[page] || titles.home;
         if (!skipPush) {
             history.pushState({ page }, '', paths[page] || '/');
@@ -444,6 +481,7 @@
         if (path.startsWith('/faq')) return 'faq';
         if (path.startsWith('/community')) return 'community';
         if (path.startsWith('/feedback-form')) return 'feedback';
+        if (path.startsWith('/extension')) return 'extension';
         return 'home';
     }
 

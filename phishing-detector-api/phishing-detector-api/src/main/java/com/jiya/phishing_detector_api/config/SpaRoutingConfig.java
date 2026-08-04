@@ -12,5 +12,6 @@ public class SpaRoutingConfig implements WebMvcConfigurer {
         registry.addViewController("/faq").setViewName("forward:/index.html");
         registry.addViewController("/community").setViewName("forward:/index.html");
         registry.addViewController("/feedback-form").setViewName("forward:/index.html");
+        registry.addViewController("/extension").setViewName("forward:/index.html");
     }
 }

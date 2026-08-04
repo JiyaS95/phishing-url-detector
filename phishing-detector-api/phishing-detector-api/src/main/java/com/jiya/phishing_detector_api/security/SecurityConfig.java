@@ -47,6 +47,8 @@ public class SecurityConfig {
                     "/faq",
                     "/community",
                     "/feedback-form",
+                    "/extension",
+                    "/download/extension.zip",
                     "/**/*.css",
                     "/**/*.js",
                     "/**/*.png",
