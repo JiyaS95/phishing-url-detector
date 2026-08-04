@@ -33,7 +33,12 @@ public class URLChecker {
             result.setRiskLevel("HIGH 🔴");
             return result;
         }
-        riskScore = riskScore + checkWhitelist(result, host, whitelistSet);
+        if (isWhitelisted(host, whitelistSet)) {
+            result.addWarning("✅ Domain is whitelisted (LOW RISK 🟢)");
+            result.setRiskScore(0);
+            result.setRiskLevel("LOW 🟢");
+            return result;
+        }
         riskScore = riskScore + checkSubdomains(result, host);
         riskScore = riskScore + checkKeywords(result, host);
         riskScore = riskScore + checkProtocol(result, urlObj);
@@ -70,15 +75,15 @@ public class URLChecker {
         return 0;
     }
 
-    public static int checkWhitelist (URLResult result, String host, Set<String> whitelistSet) {
+    public static boolean isWhitelisted (String host, Set<String> whitelistSet) {
         Iterator<String> it = whitelistSet.iterator();
         while (it.hasNext()) {
             String safeDomain = it.next();
             if (host.endsWith(safeDomain)) {
-                result.addWarning("✅ Domain is whitelisted (LOW RISK 🟢)");
+                return true;
             }
         }
-        return 0;
+        return false;
     }
 
     public static int checkSubdomains (URLResult result, String host) {
