@@ -11,6 +11,8 @@ public class SafeBrowsingService {
 
     @Value("${safebrowsing.api.key}")
     private String apiKey;
+    @Value("${urlhaus.api.key}")
+    private String urlhausApiKey;
 
     private final WebClient googleClient = WebClient.create("https://safebrowsing.googleapis.com");
     private final WebClient urlhausClient = WebClient.create("https://urlhaus-api.abuse.ch");
@@ -52,6 +54,7 @@ public class SafeBrowsingService {
             Map response = urlhausClient.post()
                 .uri("/v1/url/")
                 .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Auth-Key", urlhausApiKey)
                 .bodyValue(formBody)
                 .retrieve()
                 .bodyToMono(Map.class)
