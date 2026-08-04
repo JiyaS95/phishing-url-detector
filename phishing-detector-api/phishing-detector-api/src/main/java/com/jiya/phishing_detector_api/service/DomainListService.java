@@ -1,7 +1,10 @@
 package com.jiya.phishing_detector_api.service;
 
 import com.jiya.phishing_detector_api.model.DomainList;
+import com.jiya.phishing_detector_api.model.FlaggedDomain;
 import com.jiya.phishing_detector_api.repository.DomainListRepository;
+import com.jiya.phishing_detector_api.repository.FlaggedDomainRepository;
+import java.time.LocalDateTime;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import java.util.Set;
@@ -11,9 +14,13 @@ import java.util.stream.Collectors;
 public class DomainListService {
 
     private final DomainListRepository domainListRepository;
+    private final FlaggedDomainRepository flaggedDomainRepository;
 
-    public DomainListService(DomainListRepository domainListRepository) {
+    private static final int AUTO_BLACKLIST_THRESHOLD = 3;
+
+    public DomainListService(DomainListRepository domainListRepository, FlaggedDomainRepository flaggedDomainRepository) {
         this.domainListRepository = domainListRepository;
+        this.flaggedDomainRepository = flaggedDomainRepository;
     }
 
     // Seed default entries on startup if database is empty
@@ -97,6 +104,30 @@ public class DomainListService {
             d.setListType("WHITELIST");
             d.setReason(reason);
             domainListRepository.save(d);
+        }
+    }
+
+    // Called whenever a scan comes back HIGH risk. Tracks how many times a domain
+    // has been independently flagged, and auto-blacklists it once it crosses the
+    // threshold - avoids one single false positive permanently blocking a real site.
+    public void recordHighRiskFlag(String domain) {
+        if (domain == null || domain.isBlank()) return;
+        if (domainListRepository.existsByDomain(domain)) return; // already whitelisted or blacklisted
+
+        FlaggedDomain flagged = flaggedDomainRepository.findByDomain(domain)
+            .orElseGet(() -> {
+                FlaggedDomain f = new FlaggedDomain();
+                f.setDomain(domain);
+                f.setFlagCount(0);
+                return f;
+            });
+
+        flagged.setFlagCount(flagged.getFlagCount() + 1);
+        flagged.setLastFlaggedAt(LocalDateTime.now());
+        flaggedDomainRepository.save(flagged);
+
+        if (flagged.getFlagCount() >= AUTO_BLACKLIST_THRESHOLD) {
+            addToBlacklist(domain, "Auto-blacklisted after " + flagged.getFlagCount() + " high-risk scans", false);
         }
     }
 }

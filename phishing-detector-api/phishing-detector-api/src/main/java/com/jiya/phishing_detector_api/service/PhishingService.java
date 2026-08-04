@@ -72,6 +72,10 @@ public class PhishingService {
         else if (score <= 35) result.setRiskLevel("MEDIUM 🟡");
         else result.setRiskLevel("HIGH 🔴");
 
+        if (score > 35) {
+            domainListService.recordHighRiskFlag(result.getDomain());
+        }
+
         scanHistoryService.saveScan(user, "URL", url, result.getRiskLevel(), result.getRiskScore());
         return result;
     }
