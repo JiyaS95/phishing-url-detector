@@ -20,7 +20,7 @@ public class DomainList {
     private String reason;
 
     @Column
-    private boolean communityReported = false;
+    private Boolean communityReported = false;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -30,6 +30,6 @@ public class DomainList {
     public void setListType(String listType) { this.listType = listType; }
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
-    public boolean isCommunityReported() { return communityReported; }
-    public void setCommunityReported(boolean communityReported) { this.communityReported = communityReported; }
+    public boolean isCommunityReported() { return communityReported != null && communityReported; }
+    public void setCommunityReported(Boolean communityReported) { this.communityReported = communityReported; }
 }
