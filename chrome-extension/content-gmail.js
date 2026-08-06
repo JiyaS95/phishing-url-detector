@@ -48,6 +48,95 @@ function getEmailBody() {
   return '';
 }
 
+const scannedLinkEls = new WeakSet();
+const linkCheckCache = new Map(); // url -> { level, score }
+
+function getEmailBodyElement() {
+  const platform = getPlatform();
+  if (platform === 'gmail') {
+    return document.querySelector('.a3s.aiL, .a3s');
+  }
+  if (platform === 'outlook') {
+    const selectors = [
+      '[aria-label="Message body"]',
+      '.ReadingPaneContent',
+      '[role="document"]',
+      '.scrollable-region-content'
+    ];
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      if (el && el.innerText.trim().length > 20) return el;
+    }
+    return null;
+  }
+  if (platform === 'yahoo') {
+    const selectors = [
+      '.msg-body',
+      '[data-test-id="message-view-body"]',
+      '.ReadableMessageBody'
+    ];
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      if (el && el.innerText.trim().length > 20) return el;
+    }
+    return null;
+  }
+  return null;
+}
+
+function addLinkWarningIcon(linkEl, level, score) {
+  const next = linkEl.nextSibling;
+  if (next && next.classList && next.classList.contains('phish-link-flag')) return;
+
+  const colors = { MEDIUM: '#fbbf24', HIGH: '#f87171' };
+
+  const icon = document.createElement('span');
+  icon.className = 'phish-link-flag';
+  icon.title = `⚠️ ${level} RISK (${score}/100) — auto-scanned by Alurtra`;
+  icon.textContent = ' ⚠️';
+  icon.style.cssText = `
+    color: ${colors[level] || '#f87171'};
+    font-size: 13px;
+    cursor: default;
+    user-select: none;
+    display: inline;
+  `;
+  linkEl.insertAdjacentElement('afterend', icon);
+}
+
+async function checkLink(linkEl, url) {
+  if (scannedLinkEls.has(linkEl)) return;
+  scannedLinkEls.add(linkEl);
+
+  try {
+    let data = linkCheckCache.get(url);
+    if (!data) {
+      const res = await fetch(`${API}/check?url=${encodeURIComponent(url)}`);
+      data = await res.json();
+      linkCheckCache.set(url, data);
+    }
+
+    const level = data.riskLevel
+      ? (data.riskLevel.includes('HIGH') ? 'HIGH' : data.riskLevel.includes('MEDIUM') ? 'MEDIUM' : 'LOW')
+      : 'LOW';
+
+    if (level === 'MEDIUM' || level === 'HIGH') {
+      addLinkWarningIcon(linkEl, level, data.riskScore);
+    }
+  } catch (e) {}
+}
+
+function scanLinksInEmail() {
+  const body = getEmailBodyElement();
+  if (!body) return;
+  const links = body.querySelectorAll('a[href^="http"]');
+  links.forEach(link => {
+    if (scannedLinkEls.has(link)) return;
+    if (!link.href) return;
+    checkLink(link, link.href);
+  });
+}
+
 function removeBanner() {
   const old = document.getElementById('phish-banner');
   if (old) old.remove();
@@ -202,9 +291,11 @@ function createToggleButton() {
 }
 
 createToggleButton();
+scanLinksInEmail();
 
 const observer = new MutationObserver(() => {
   createToggleButton();
+  scanLinksInEmail();
   if (bannerVisible) {
     const emailBody = getEmailBody();
     if (!emailBody) removeBanner();
