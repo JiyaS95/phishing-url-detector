@@ -8,9 +8,9 @@
   <Description DefaultValue="A template to get started."/>
   <IconUrl DefaultValue="https://www.alurtra.linkpc.net/images/logo3.png"/>
   <HighResolutionIconUrl DefaultValue="https://www.alurtra.linkpc.net/images/logo3.png"/>
-  <SupportUrl DefaultValue="https://www.contoso.com/help"/>
+  <SupportUrl DefaultValue="https://www.alurtra.linkpc.net/faq"/>
   <AppDomains>
-    <AppDomain>https://www.contoso.com</AppDomain>
+    <AppDomain>https://www.alurtra.linkpc.net</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>
@@ -23,7 +23,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://www.contoso.com/taskpane.html"/>
+        <SourceLocation DefaultValue="https://www.alurtra.linkpc.net/outlook-addin/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -90,8 +90,8 @@
         <bt:Image id="Icon.80x80" DefaultValue="https://www.alurtra.linkpc.net/images/logo3.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://www.contoso.com/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://www.contoso.com/taskpane.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://www.alurtra.linkpc.net/outlook-addin/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://www.alurtra.linkpc.net/outlook-addin/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GroupLabel" DefaultValue="Contoso Add-in"/>
