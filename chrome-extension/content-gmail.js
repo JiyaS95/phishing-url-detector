@@ -105,8 +105,9 @@ function addLinkWarningIcon(linkEl, level, score) {
 }
 
 let scanQueue = [];
-let queueRunning = false;
-const THROTTLE_MS = 1500; // stay well under the 30 req/min backend limit
+let activeWorkers = 0;
+const MAX_CONCURRENT = 5;   // check 5 links at once
+const MAX_LINKS_PER_EMAIL = 25; // cap so huge emails don't eat the whole rate-limit budget
 
 async function checkLink(linkEl, url) {
   try {
@@ -128,34 +129,31 @@ async function checkLink(linkEl, url) {
   } catch (e) {}
 }
 
-function processQueue() {
-  if (queueRunning) return;
-  queueRunning = true;
-
-  function next() {
-    if (scanQueue.length === 0) {
-      queueRunning = false;
-      return;
-    }
+function pumpQueue() {
+  while (activeWorkers < MAX_CONCURRENT && scanQueue.length > 0) {
     const { linkEl, url } = scanQueue.shift();
+    activeWorkers++;
     checkLink(linkEl, url).finally(() => {
-      setTimeout(next, THROTTLE_MS);
+      activeWorkers--;
+      pumpQueue();
     });
   }
-  next();
 }
 
 function scanLinksInEmail() {
   const body = getEmailBodyElement();
   if (!body) return;
   const links = body.querySelectorAll('a[href^="http"]');
-  links.forEach(link => {
-    if (scannedLinkEls.has(link)) return;
-    if (!link.href) return;
+  let queued = 0;
+  for (const link of links) {
+    if (queued >= MAX_LINKS_PER_EMAIL) break;
+    if (scannedLinkEls.has(link)) continue;
+    if (!link.href) continue;
     scannedLinkEls.add(link);
     scanQueue.push({ linkEl: link, url: link.href });
-  });
-  processQueue();
+    queued++;
+  }
+  pumpQueue();
 }
 
 function removeBanner() {
