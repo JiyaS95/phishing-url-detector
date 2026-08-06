@@ -104,14 +104,16 @@ function addLinkWarningIcon(linkEl, level, score) {
   linkEl.insertAdjacentElement('afterend', icon);
 }
 
-async function checkLink(linkEl, url) {
-  if (scannedLinkEls.has(linkEl)) return;
-  scannedLinkEls.add(linkEl);
+let scanQueue = [];
+let queueRunning = false;
+const THROTTLE_MS = 1500; // stay well under the 30 req/min backend limit
 
+async function checkLink(linkEl, url) {
   try {
     let data = linkCheckCache.get(url);
     if (!data) {
       const res = await fetch(`${API}/check?url=${encodeURIComponent(url)}`);
+      if (!res.ok) return; // rate-limited or errored, skip silently rather than show bad data
       data = await res.json();
       linkCheckCache.set(url, data);
     }
@@ -126,6 +128,23 @@ async function checkLink(linkEl, url) {
   } catch (e) {}
 }
 
+function processQueue() {
+  if (queueRunning) return;
+  queueRunning = true;
+
+  function next() {
+    if (scanQueue.length === 0) {
+      queueRunning = false;
+      return;
+    }
+    const { linkEl, url } = scanQueue.shift();
+    checkLink(linkEl, url).finally(() => {
+      setTimeout(next, THROTTLE_MS);
+    });
+  }
+  next();
+}
+
 function scanLinksInEmail() {
   const body = getEmailBodyElement();
   if (!body) return;
@@ -133,8 +152,10 @@ function scanLinksInEmail() {
   links.forEach(link => {
     if (scannedLinkEls.has(link)) return;
     if (!link.href) return;
-    checkLink(link, link.href);
+    scannedLinkEls.add(link);
+    scanQueue.push({ linkEl: link, url: link.href });
   });
+  processQueue();
 }
 
 function removeBanner() {
@@ -253,6 +274,12 @@ async function scanEmail() {
       headers: { 'Content-Type': 'text/plain' },
       body: body
     });
+    if (!res.ok) {
+      alert(res.status === 429
+        ? 'Too many requests right now — please wait a minute and try again.'
+        : 'Could not complete scan. Please try again.');
+      return;
+    }
     const data = await res.json();
     showBanner(data);
   } catch (e) {

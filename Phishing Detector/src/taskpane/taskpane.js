@@ -32,6 +32,15 @@ async function scanEmail() {
                     headers: { 'Content-Type': 'text/plain' },
                     body: body
                 });
+                if (!res.ok) {
+                    const msg = res.status === 429
+                        ? 'Too many requests right now — please wait a minute and try again.'
+                        : 'Could not complete scan. Please try again.';
+                    resultDiv.innerHTML = '<div class="error-msg">' + msg + '</div>';
+                    btn.disabled = false;
+                    btn.textContent = 'Scan This Email';
+                    return;
+                }
                 const data = await res.json();
                 renderResult(data, resultDiv);
             } catch (e) {
