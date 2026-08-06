@@ -50,6 +50,44 @@
         .nav-logo { font-size: 22px; font-weight: 800; color: #fff; font-family: "Oldenburg", cursive; }
         .nav-right { display: flex; gap: 12px; align-items: center; }
         .nav-user { font-size: 13px; color: #888; }
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 32px;
+            height: 32px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .nav-hamburger span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: #fff;
+            border-radius: 2px;
+        }
+        @media (max-width: 768px) {
+            .nav-hamburger { display: flex; }
+            .nav-right {
+                display: none;
+                position: absolute;
+                top: 64px;
+                left: 0;
+                right: 0;
+                background: #13131f;
+                border-bottom: 1px solid #1e1e32;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px 20px;
+                gap: 8px;
+                z-index: 999;
+            }
+            .nav-right.open { display: flex; }
+            .nav-right .btn-sm { width: 100%; text-align: left; }
+        }
         .btn-sm {
             padding: 8px 16px;
             border-radius: 8px;
@@ -229,7 +267,10 @@
 <!-- NAV -->
 <nav>
     <div class="nav-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="showPage('home')"><img src="/images/logo3.png" alt="Alurtra logo" style="height:32px;width:32px;object-fit:contain;"> Alurtra</div>
-    <div class="nav-right">
+    <button class="nav-hamburger" id="navHamburger" onclick="document.getElementById('navRight').classList.toggle('open')" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="nav-right" id="navRight">
         <span class="nav-user" id="navUser"></span>
         <button class="btn-sm btn-ghost" onclick="showPage('community')">Community</button>
         <button class="btn-sm btn-ghost" onclick="showPage('history')">History</button>
@@ -461,6 +502,8 @@
         document.getElementById('page-extension').style.display = page === 'extension' ? 'flex' : 'none';
         if (page === 'history') loadHistory();
         if (page === 'community') loadCommunityScams();
+        const navRight = document.getElementById('navRight');
+        if (navRight) navRight.classList.remove('open');
         window.scrollTo({top: 0, behavior: 'smooth'});
 
         const paths = { home: '/', history: '/scan-history', faq: '/faq', community: '/community', feedback: '/feedback-form', extension: '/extension' };
