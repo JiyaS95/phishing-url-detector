@@ -143,7 +143,7 @@ function removeBanner() {
   bannerVisible = false;
   const btn = document.getElementById('phish-toggle-btn');
   if (btn) {
-    btn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/logo3.png') + '" style="height:16px;width:16px;vertical-align:middle;margin-right:6px;"> Scan Email';
+    btn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/logo4.png') + '" style="height:16px;width:16px;vertical-align:middle;margin-right:6px;"> Scan Email';
     btn.style.background = '#4f46e5';
   }
 }
@@ -164,7 +164,7 @@ function showBanner(data) {
     }
     setTimeout(() => {
       if (btn) {
-        btn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/logo3.png') + '" style="height:16px;width:16px;vertical-align:middle;margin-right:6px;"> Scan Email';
+        btn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/logo4.png') + '" style="height:16px;width:16px;vertical-align:middle;margin-right:6px;"> Scan Email';
         btn.style.background = '#4f46e5';
       }
     }, 3000);
@@ -209,7 +209,7 @@ function showBanner(data) {
 
   banner.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <span style="color:${c.text};font-weight:700;font-size:14px;"><img src="${chrome.runtime.getURL('icons/logo3.png')}" style="height:14px;width:14px;vertical-align:middle;margin-right:6px;"> ${level} RISK — ${data.riskScore}/100</span>
+      <span style="color:${c.text};font-weight:700;font-size:14px;"><img src="${chrome.runtime.getURL('icons/logo4.png')}" style="height:14px;width:14px;vertical-align:middle;margin-right:6px;"> ${level} RISK — ${data.riskScore}/100</span>
       <span id="phish-close" style="cursor:pointer;color:#888;font-size:18px;margin-left:12px;line-height:1;">✕</span>
     </div>
     ${warningsBlock}
@@ -268,7 +268,7 @@ function createToggleButton() {
 
   const btn = document.createElement('button');
   btn.id = 'phish-toggle-btn';
-  btn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/logo3.png') + '" style="height:16px;width:16px;vertical-align:middle;margin-right:6px;"> Scan Email';
+  btn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/logo4.png') + '" style="height:16px;width:16px;vertical-align:middle;margin-right:6px;"> Scan Email';
   btn.style.cssText = `
     position: fixed;
     bottom: 28px;

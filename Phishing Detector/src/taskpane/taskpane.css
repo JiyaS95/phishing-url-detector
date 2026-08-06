@@ -17,7 +17,7 @@ body {
     border-bottom: 1px solid #1e1e32;
 }
 
-.logo { font-size: 28px; }
+.logo { height: 28px; width: 28px; object-fit: contain; }
 
 h1 {
     font-size: 20px;

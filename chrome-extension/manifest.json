@@ -75,7 +75,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "icons/logo3.png"
+        "icons/logo3.png",
+        "icons/logo4.png"
       ],
       "matches": [
         "https://mail.google.com/*",
