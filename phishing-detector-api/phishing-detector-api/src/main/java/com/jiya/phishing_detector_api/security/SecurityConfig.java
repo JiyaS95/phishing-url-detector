@@ -20,10 +20,12 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final RateLimitFilter rateLimitFilter;
+    private final OutlookAddinFrameFilter outlookAddinFrameFilter;
 
-    public SecurityConfig(JwtFilter jwtFilter, RateLimitFilter rateLimitFilter) {
+    public SecurityConfig(JwtFilter jwtFilter, RateLimitFilter rateLimitFilter, OutlookAddinFrameFilter outlookAddinFrameFilter) {
         this.jwtFilter = jwtFilter;
         this.rateLimitFilter = rateLimitFilter;
+        this.outlookAddinFrameFilter = outlookAddinFrameFilter;
     }
 
     @Bean
@@ -60,7 +62,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(rateLimitFilter, JwtFilter.class);
+            .addFilterBefore(rateLimitFilter, JwtFilter.class)
+            .addFilterBefore(outlookAddinFrameFilter, RateLimitFilter.class);
         return http.build();
     }
 
