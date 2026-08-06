@@ -4,6 +4,8 @@ Office.onReady(() => {
     // Office is ready
 });
 
+window.scanEmail = scanEmail;
+
 async function scanEmail() {
     const btn = document.getElementById('scanBtn');
     const resultDiv = document.getElementById('result');
