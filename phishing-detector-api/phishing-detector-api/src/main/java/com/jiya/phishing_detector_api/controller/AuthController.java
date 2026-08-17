@@ -5,7 +5,10 @@ import com.jiya.phishing_detector_api.dto.RegisterRequest;
 import com.jiya.phishing_detector_api.model.User;
 import com.jiya.phishing_detector_api.repository.UserRepository;
 import com.jiya.phishing_detector_api.security.JwtUtil;
+import com.jiya.phishing_detector_api.service.MailService;
 import org.springframework.http.ResponseEntity;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +25,8 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     private final ScanHistoryRepository scanHistoryRepository;
+    private final MailService mailService;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private static final java.util.Set<String> DISPOSABLE_EMAIL_DOMAINS = java.util.Set.of(
         "mailinator.com", "10minutemail.com", "guerrillamail.com", "yopmail.com",
@@ -58,11 +63,13 @@ public class AuthController {
     public AuthController(UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
                           JwtUtil jwtUtil,
-                          ScanHistoryRepository scanHistoryRepository) {
+                          ScanHistoryRepository scanHistoryRepository,
+                          MailService mailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.scanHistoryRepository = scanHistoryRepository;
+        this.mailService = mailService;
     }
 
     @PostMapping("/register")
@@ -136,6 +143,60 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(newPass));
         userRepository.save(user);
         return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email is required"));
+        }
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        // Always return success even if the email doesn't exist, so attackers can't
+        // use this endpoint to discover which emails are registered.
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            String code = String.format("%06d", RANDOM.nextInt(1_000_000));
+            user.setResetCode(code);
+            user.setResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+            userRepository.save(user);
+            mailService.sendPasswordResetCode(user.getEmail(), code);
+        }
+        return ResponseEntity.ok(Map.of("message", "If that email is registered, a reset code has been sent."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String code = body.get("code");
+        String newPassword = body.get("newPassword");
+
+        if (email == null || code == null || newPassword == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email, code, and new password are required"));
+        }
+        if (newPassword.length() < 8) {
+            return ResponseEntity.badRequest().body(Map.of("error", "New password must be at least 8 characters"));
+        }
+
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired code"));
+        }
+        User user = userOpt.get();
+
+        if (user.getResetCode() == null
+            || !user.getResetCode().equals(code)
+            || user.getResetCodeExpiresAt() == null
+            || user.getResetCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired code"));
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetCode(null);
+        user.setResetCodeExpiresAt(null);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
     }
 
     @DeleteMapping("/delete-account")

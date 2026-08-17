@@ -27,6 +27,10 @@ public class User {
 
     @Column(name = "role")
     private String role = "USER";
+    @Column(name = "reset_code")
+    private String resetCode;
+    @Column(name = "reset_code_expires_at")
+    private LocalDateTime resetCodeExpiresAt;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -39,4 +43,8 @@ public class User {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public String getResetCode() { return resetCode; }
+    public void setResetCode(String resetCode) { this.resetCode = resetCode; }
+    public LocalDateTime getResetCodeExpiresAt() { return resetCodeExpiresAt; }
+    public void setResetCodeExpiresAt(LocalDateTime resetCodeExpiresAt) { this.resetCodeExpiresAt = resetCodeExpiresAt; }
 }
