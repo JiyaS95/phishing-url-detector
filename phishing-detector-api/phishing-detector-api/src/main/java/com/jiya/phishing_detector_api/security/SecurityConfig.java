@@ -51,6 +51,7 @@ public class SecurityConfig {
                     "/feedback-form",
                     "/extension",
                     "/download/extension.zip",
+                    "/download/manifest.xml",
                     "/**/*.css",
                     "/**/*.js",
                     "/**/*.png",
