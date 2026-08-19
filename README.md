@@ -1,4 +1,5 @@
-# Alurtra
+# <img width="35" height="30" alt="Alurtra Simple Logo 3-Photoroom" src="https://github.com/user-attachments/assets/e513e246-6a0b-4374-8b6c-d621b7d85419" /> &nbsp; Alurtra 
+
 
 A phishing detection tool built in Java that analyzes URLs and emails for suspicious patterns and gives users a clear risk assessment. The project started as a simple URL checker and gradually evolved into a full web app. It now includes a Chrome extension and an Outlook Add-in, providing real-time protection while browsing and reading emails.
 
@@ -84,8 +85,9 @@ gmail.refresh-token=YOUR_OAUTH_REFRESH_TOKEN
 ```
 
 ## Live Demo
-https://www.alurtra.linkpc.net/
-
+**https://www.alurtra.linkpc.net/**
+<br>
+<br>
 
 ## Website
 
