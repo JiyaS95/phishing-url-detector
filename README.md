@@ -90,18 +90,19 @@ https://www.alurtra.linkpc.net/
 ## Website
 
 ### Home Page
-<img width="1127" height="640" alt="image" src="https://github.com/user-attachments/assets/0bcbfb46-40f1-48bf-bd8d-6c179846abf6" />
+<img width="1887" height="812" alt="Home Page" src="https://github.com/user-attachments/assets/64a13b6a-9959-4c66-8c03-45cc133fae33" />
 
 ### High Risk Result - URL
-<img width="887" height="950" alt="High Risk - Website" src="https://github.com/user-attachments/assets/d359a796-5824-4ec9-a540-fd52ca026721" />
+<img width="821" height="946" alt="High Risk - Website" src="https://github.com/user-attachments/assets/54ec8bcd-99d5-4f7d-bb00-f87a25826177" />
 
 ### Medium Risk Result - Email
 <img width="712" height="965" alt="image" src="https://github.com/user-attachments/assets/f8aba9e9-0cc9-42f8-8307-6a4495ebb41c" />
 
+
 ## Chrome Extension
 
 ### URL Analyzer — High Risk
-<img width="461" height="587" alt="High Risk URL - Extension" src="https://github.com/user-attachments/assets/3ab2bb54-3c31-45be-b37b-48a5089e3583" />
+<img width="458" height="588" alt="High Risk URL - Extension" src="https://github.com/user-attachments/assets/9cce339b-0dcc-4de9-89f9-7e67fed54c61" />
 
 ### Email Analyzer — Low Risk
 <img width="467" height="745" alt="image" src="https://github.com/user-attachments/assets/ac49fa0e-96c3-4fee-b18d-9a7b7498c980" />
