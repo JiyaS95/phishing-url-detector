@@ -51,7 +51,7 @@ function showWarningPage(url, result) {
     : '';
 
   const ai = result.aiAnalysis
-    ? `<div style="margin-top:12px;padding:12px;background:#0d0d1a;border-radius:8px;border-left:3px solid #4f46e5;"><div style="font-size:11px;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">🤖 AI Analysis</div><div style="font-size:13px;color:#ccc;line-height:1.5;">${result.aiAnalysis}</div></div>`
+    ? `<div style="margin-top:12px;padding:12px;background:#0d0d1a;border-radius:8px;border-left:3px solid #4f46e5;"><div style="font-size:11px;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">AI Analysis</div><div style="font-size:13px;color:#ccc;line-height:1.5;">${result.aiAnalysis}</div></div>`
     : '';
 
   overlay.innerHTML = `

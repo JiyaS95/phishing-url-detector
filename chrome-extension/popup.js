@@ -92,7 +92,7 @@ function renderEmailResult(data, el) {
   const warnings = data.warnings || [];
   const aiBlock = data.aiAnalysis
     ? `<div style="margin-top:10px;padding:10px;background:#0a0a1a;border-radius:8px;border-left:3px solid #4f46e5;">
-        <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">🤖 AI Analysis</div>
+        <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">AI Analysis</div>
         <div style="font-size:12px;color:#ccc;line-height:1.5;">${data.aiAnalysis}</div>
        </div>`
     : '';

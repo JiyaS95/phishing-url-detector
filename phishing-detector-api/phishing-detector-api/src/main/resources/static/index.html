@@ -1046,7 +1046,7 @@
                 ${data.path ? `<div class="meta-item" style="grid-column:span 2"><div class="meta-label">Path</div><div class="meta-value">${data.path}</div></div>` : ""}
             </div>
             ${renderWarnings(data.warnings)}
-            ${data.riskScore >= 15 ? `<div id="aiAnalysisSlot" style="margin-top:12px;padding:10px;background:#0a0a1a;border-radius:8px;border-left:3px solid #4f46e5;"><div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🤖 AI Analysis</div><div id="aiAnalysisText" style="font-size:12px;color:#ccc;line-height:1.5;">Loading AI insight...</div></div>` : ""}
+            ${data.riskScore >= 15 ? `<div id="aiAnalysisSlot" style="margin-top:12px;padding:10px;background:#0a0a1a;border-radius:8px;border-left:3px solid #4f46e5;"><div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">AI Analysis</div><div id="aiAnalysisText" style="font-size:12px;color:#ccc;line-height:1.5;">Loading AI insight...</div></div>` : ""}
             ${level !== "LOW" ? `<button onclick="reportScam('${urlVal}', 'GENERAL')" style="margin-top:12px;width:100%;padding:8px;background:#1e1e2e;border:1px solid #2a2a40;border-radius:8px;color:#888;font-size:12px;cursor:pointer;">🚩 Report this as a scam</button>` : ""}
         </div>`;
     }
