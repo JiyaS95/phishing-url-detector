@@ -109,7 +109,8 @@ public class MailService {
         message.setSubject("Verify your Alurtra account");
         message.setText(
             "Your email verification code is: " + code + "\n\n" +
-            "This code expires in 15 minutes. If you did not create an account, you can safely ignore this email."
+            "This code expires in 15 minutes.\n" +
+            "If you did not create an account, you can safely ignore this email."
         );
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();

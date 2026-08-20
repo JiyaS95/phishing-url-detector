@@ -80,7 +80,7 @@ function showWarningPage(url, result) {
           Continue Anyway
         </button>
       </div>
-      <p style="color:#333;font-size:11px;text-align:center;margin-top:12px;">Powered by Alurtra 🛡️</p>
+      <p style="color:#333;font-size:11px;text-align:center;margin-top:12px;">Powered by Alurtra</p>
     </div>
   `;
 
