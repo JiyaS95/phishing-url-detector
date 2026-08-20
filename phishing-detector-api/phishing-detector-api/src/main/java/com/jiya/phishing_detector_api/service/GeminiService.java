@@ -4,6 +4,11 @@ import com.jiya.phishing_detector_api.detector.URLResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import reactor.netty.http.client.HttpClient;
+import java.util.concurrent.TimeUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +18,14 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    private final WebClient webClient = WebClient.create("https://generativelanguage.googleapis.com");
+    private final WebClient webClient = WebClient.builder()
+        .baseUrl("https://generativelanguage.googleapis.com")
+        .clientConnector(new ReactorClientHttpConnector(
+            HttpClient.create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 20000)
+                .doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(20, TimeUnit.SECONDS)))
+        ))
+        .build();
 
     private String callGemini(String prompt) {
         try {
@@ -28,7 +40,7 @@ public class GeminiService {
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(Map.class)
-                .timeout(java.time.Duration.ofSeconds(8))
+                .timeout(java.time.Duration.ofSeconds(20))
                 .block();
 
             if (response == null) return null;
