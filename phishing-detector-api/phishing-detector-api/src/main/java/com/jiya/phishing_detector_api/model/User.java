@@ -31,6 +31,12 @@ public class User {
     private String resetCode;
     @Column(name = "reset_code_expires_at")
     private LocalDateTime resetCodeExpiresAt;
+    @Column(name = "email_verified")
+    private boolean emailVerified = false;
+    @Column(name = "verification_code")
+    private String verificationCode;
+    @Column(name = "verification_code_expires_at")
+    private LocalDateTime verificationCodeExpiresAt;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -47,4 +53,10 @@ public class User {
     public void setResetCode(String resetCode) { this.resetCode = resetCode; }
     public LocalDateTime getResetCodeExpiresAt() { return resetCodeExpiresAt; }
     public void setResetCodeExpiresAt(LocalDateTime resetCodeExpiresAt) { this.resetCodeExpiresAt = resetCodeExpiresAt; }
+    public boolean isEmailVerified() { return emailVerified; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
+    public String getVerificationCode() { return verificationCode; }
+    public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+    public LocalDateTime getVerificationCodeExpiresAt() { return verificationCodeExpiresAt; }
+    public void setVerificationCodeExpiresAt(LocalDateTime verificationCodeExpiresAt) { this.verificationCodeExpiresAt = verificationCodeExpiresAt; }
 }

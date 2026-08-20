@@ -83,4 +83,37 @@ public class MailService {
         message.writeTo(buffer);
         return Base64.getUrlEncoder().encodeToString(buffer.toByteArray());
     }
+    public void sendVerificationCode(String toEmail, String code) {
+        try {
+            String accessToken = getAccessToken();
+            String rawMessage = buildVerificationMessage(toEmail, code);
+
+            webClient.post()
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/send")
+                .header("Authorization", "Bearer " + accessToken)
+                .header("Content-Type", "application/json")
+                .bodyValue(Map.of("raw", rawMessage))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to send verification email: " + e.getMessage(), e);
+        }
+    }
+
+    private String buildVerificationMessage(String toEmail, String code) throws Exception {
+        Session session = Session.getDefaultInstance(new Properties());
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(fromAddress));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+        message.setSubject("Verify your Alurtra account");
+        message.setText(
+            "Your email verification code is: " + code + "\n\n" +
+            "This code expires in 15 minutes. If you did not create an account, you can safely ignore this email."
+        );
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        message.writeTo(buffer);
+        return Base64.getUrlEncoder().encodeToString(buffer.toByteArray());
+    }
 }

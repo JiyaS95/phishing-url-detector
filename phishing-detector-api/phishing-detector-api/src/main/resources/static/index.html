@@ -362,6 +362,23 @@
     </div>
 </div>
 
+<!-- VERIFY EMAIL MODAL -->
+<div class="modal-overlay" id="verifyModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('verify')">✕</button>
+        <h2>Verify your email</h2>
+        <p style="font-size:13px;color:#888;margin-bottom:16px;">We sent a 6-digit code to <span id="verifyEmailDisplay" style="color:#ccc;"></span>. It expires in 15 minutes.</p>
+        <input type="hidden" id="verifyEmail">
+        <div class="form-group">
+            <label>Verification code</label>
+            <input type="text" id="verifyCode" placeholder="123456" maxlength="6">
+        </div>
+        <div class="form-error" id="verifyError"></div>
+        <button class="btn-full" onclick="verifyEmailCode()">Verify</button>
+        <div class="modal-switch"><a onclick="resendVerificationCode()">Resend code</a></div>
+    </div>
+</div>
+
 <div id="page-home" class="main">
     <div class="header">
         <img src="/images/logo3.png" alt="Alurtra logo" style="height:80px;width:80px;object-fit:contain;margin-bottom:12px;">
@@ -693,6 +710,11 @@
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json();
+            if (res.status === 403 && data.error) {
+                closeModal("login");
+                openVerifyModal(email);
+                return;
+            }
             if (!res.ok || data.error) { errEl.textContent = data.error || "Login failed"; errEl.style.display = "block"; return; }
             token = data.token;
             currentUser = { name: data.name, email: data.email };
@@ -774,14 +796,62 @@
             });
             const data = await res.json();
             if (!res.ok || data.error) { errEl.textContent = data.error || "Registration failed"; errEl.style.display = "block"; return; }
+            closeModal("register");
+            openVerifyModal(email);
+        } catch(e) {
+            errEl.textContent = "Could not connect to server"; errEl.style.display = "block";
+        }
+    }
+
+    function openVerifyModal(email) {
+        document.getElementById("verifyEmail").value = email;
+        document.getElementById("verifyEmailDisplay").textContent = email;
+        document.getElementById("verifyCode").value = "";
+        document.getElementById("verifyError").style.display = "none";
+        openModal("verify");
+    }
+
+    async function verifyEmailCode() {
+        const email = document.getElementById("verifyEmail").value;
+        const code = document.getElementById("verifyCode").value;
+        const errEl = document.getElementById("verifyError");
+        errEl.style.display = "none";
+        errEl.style.color = "#f87171";
+        try {
+            const res = await fetch(API + "/auth/verify-email", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, code })
+            });
+            const data = await res.json();
+            if (!res.ok || data.error) { errEl.textContent = data.error || "Verification failed"; errEl.style.display = "block"; return; }
             token = data.token;
             currentUser = { name: data.name, email: data.email };
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(currentUser));
-            closeModal("register");
+            closeModal("verify");
             updateNav();
             loadHistory();
         } catch(e) {
+            errEl.textContent = "Could not connect to server"; errEl.style.display = "block";
+        }
+    }
+
+    async function resendVerificationCode() {
+        const email = document.getElementById("verifyEmail").value;
+        const errEl = document.getElementById("verifyError");
+        try {
+            const res = await fetch(API + "/auth/resend-verification", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            errEl.style.color = "#4ade80";
+            errEl.textContent = data.message || "Code resent.";
+            errEl.style.display = "block";
+        } catch(e) {
+            errEl.style.color = "#f87171";
             errEl.textContent = "Could not connect to server"; errEl.style.display = "block";
         }
     }

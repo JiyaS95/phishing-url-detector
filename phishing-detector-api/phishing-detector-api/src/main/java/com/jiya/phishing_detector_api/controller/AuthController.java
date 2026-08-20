@@ -90,11 +90,14 @@ public class AuthController {
         user.setName(req.getName());
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
+        user.setEmailVerified(false);
+        String code = String.format("%06d", RANDOM.nextInt(1_000_000));
+        user.setVerificationCode(code);
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
-        String token = jwtUtil.generateToken(user.getEmail());
+        mailService.sendVerificationCode(user.getEmail(), code);
         return ResponseEntity.ok(Map.of(
-            "token", token,
-            "name", user.getName(),
+            "message", "Account created. Please check your email for a verification code.",
             "email", user.getEmail()
         ));
     }
@@ -110,6 +113,9 @@ public class AuthController {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid email or password"));
         }
         User user = userOpt.get();
+        if (!user.isEmailVerified()) {
+            return ResponseEntity.status(403).body(Map.of("error", "Please verify your email before logging in"));
+        }
         String token = jwtUtil.generateToken(user.getEmail());
         return ResponseEntity.ok(Map.of(
             "token", token,
@@ -197,6 +203,54 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String code = body.get("code");
+        if (email == null || code == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email and code are required"));
+        }
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired code"));
+        }
+        User user = userOpt.get();
+        if (user.getVerificationCode() == null
+            || !user.getVerificationCode().equals(code)
+            || user.getVerificationCodeExpiresAt() == null
+            || user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired code"));
+        }
+        user.setEmailVerified(true);
+        user.setVerificationCode(null);
+        user.setVerificationCodeExpiresAt(null);
+        userRepository.save(user);
+        String token = jwtUtil.generateToken(user.getEmail());
+        return ResponseEntity.ok(Map.of(
+            "token", token,
+            "name", user.getName(),
+            "email", user.getEmail()
+        ));
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email is required"));
+        }
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent() && !userOpt.get().isEmailVerified()) {
+            User user = userOpt.get();
+            String code = String.format("%06d", RANDOM.nextInt(1_000_000));
+            user.setVerificationCode(code);
+            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+            userRepository.save(user);
+            mailService.sendVerificationCode(user.getEmail(), code);
+        }
+        return ResponseEntity.ok(Map.of("message", "If that email is registered and unverified, a new code has been sent."));
     }
 
     @DeleteMapping("/delete-account")
