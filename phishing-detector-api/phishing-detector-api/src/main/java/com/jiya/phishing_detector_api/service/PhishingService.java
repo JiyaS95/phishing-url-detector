@@ -62,7 +62,7 @@ public class PhishingService {
         scamReportRepository.findByUrlOrEmailValue(url).ifPresent(report -> {
             int count = report.getReportCount();
             result.setCommunityReports(count);
-            result.addWarning("🍁 " + count + " Canadian" + (count == 1 ? "" : "s") + " reported this as a scam");
+            result.addWarning("🍁 " + count + " user" + (count == 1 ? "" : "s") + " reported this as a scam");
             result.setRiskScore(Math.min(result.getRiskScore() + (count * 10), 100));
         });
 
