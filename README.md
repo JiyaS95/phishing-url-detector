@@ -14,6 +14,8 @@ A phishing detection tool built in Java that analyzes URLs and emails for suspic
 - Check against whitelist and blacklist (whitelisted domains skip all other checks and are always marked LOW risk)
 - Calculate overall risk score (Low, Medium, High)
 - Powered by Google Safe Browsing API and URLhaus for known malware detection
+- Flags domains impersonating Canadian government agencies (CRA, Service Canada) or Canadian banks (RBC, TD, Scotiabank, BMO, CIBC, etc.)
+- AI-powered contextual analysis (Google Gemini) for additional risk insight
 
 **Email Analysis**
 - Detect urgency and threat language

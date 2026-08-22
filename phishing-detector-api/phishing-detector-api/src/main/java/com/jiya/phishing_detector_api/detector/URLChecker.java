@@ -44,6 +44,7 @@ public class URLChecker {
         riskScore = riskScore + checkProtocol(result, urlObj);
         riskScore = riskScore + checkDigitsAndLength(result, url);
         riskScore = riskScore + checkIPAddress(result, host);
+        riskScore = riskScore + checkCanadianImpersonation(result, host);
         result.setRiskScore(riskScore);
 
         if (riskScore >= 0 && riskScore <= 10) {
@@ -156,5 +157,45 @@ public class URLChecker {
             riskScore = 40;
         }
         return riskScore;
+    }
+
+    private static final String[] CANADIAN_GOV_TERMS = {
+        "canada-ca", "cra-gc", "cra-arc", "servicecanada", "service-canada",
+        "canadarevenue", "cra-refund", "cerb-canada", "gc-ca", "canadapost-ca"
+    };
+    private static final String[] CANADIAN_BANK_TERMS = {
+        "rbc", "td-canada", "scotiabank", "bmo-", "cibc", "desjardins", "tangerine"
+    };
+    private static final String[] LEGITIMATE_CANADIAN_DOMAINS = {
+        ".gc.ca", "canada.ca", "cra-arc.gc.ca", "interac.ca", "canadapost-postescanada.ca",
+        "rbc.com", "royalbank.com", "td.com", "scotiabank.com", "bmo.com", "cibc.com",
+        "desjardins.com", "tangerine.ca"
+    };
+
+    public static int checkCanadianImpersonation(URLResult result, String host) {
+        String lowerHost = host.toLowerCase();
+        boolean isLegit = false;
+        for (String legit : LEGITIMATE_CANADIAN_DOMAINS) {
+            if (lowerHost.endsWith(legit)) {
+                isLegit = true;
+                break;
+            }
+        }
+        if (isLegit) {
+            return 0;
+        }
+        for (String term : CANADIAN_GOV_TERMS) {
+            if (lowerHost.contains(term)) {
+                result.addWarning("Domain appears to impersonate a Canadian government service: " + term);
+                return 45;
+            }
+        }
+        for (String term : CANADIAN_BANK_TERMS) {
+            if (lowerHost.contains(term)) {
+                result.addWarning("Domain appears to impersonate a Canadian bank: " + term);
+                return 45;
+            }
+        }
+        return 0;
     }
 }
