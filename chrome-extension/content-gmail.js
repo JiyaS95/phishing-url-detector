@@ -123,7 +123,7 @@ async function checkLink(linkEl, url) {
       ? (data.riskLevel.includes('HIGH') ? 'HIGH' : data.riskLevel.includes('MEDIUM') ? 'MEDIUM' : 'LOW')
       : 'LOW';
 
-    if (level === 'MEDIUM' || level === 'HIGH') {
+    if (level === 'HIGH') {
       addLinkWarningIcon(linkEl, level, data.riskScore);
     }
   } catch (e) {}
