@@ -1,4 +1,4 @@
-const API = 'https://phishing-url-detector-je19.onrender.com';
+const API = 'https://phishing-url-detector-6462.onrender.com';
 
 // Cache results so we don't call the API for the same URL twice
 const cache = {};

@@ -1,4 +1,4 @@
-const API = 'https://phishing-url-detector-je19.onrender.com';
+const API = 'https://phishing-url-detector-6462.onrender.com';
 
 function createBadge(level, score) {
   const colors = {

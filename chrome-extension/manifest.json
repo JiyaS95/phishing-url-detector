@@ -15,7 +15,7 @@
     "https://outlook.office.com/*",
     "https://outlook.office365.com/*",
     "https://mail.yahoo.com/*",
-    "https://phishing-url-detector-je19.onrender.com/*"
+    "https://phishing-url-detector-6462.onrender.com/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -59,7 +59,7 @@
       ],
       "run_at": "document_start",
       "exclude_matches": [
-        "https://phishing-url-detector-je19.onrender.com/*",
+        "https://phishing-url-detector-6462.onrender.com/*",
         "https://mail.google.com/*",
         "https://www.google.com/*",
         "https://outlook.live.com/*",

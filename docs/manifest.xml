@@ -12,10 +12,10 @@
   <Description DefaultValue="Scan emails for phishing and scams using AI."/>
   <IconUrl DefaultValue="https://jiyaS95.github.io/phishing-url-detector/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="https://jiyaS95.github.io/phishing-url-detector/assets/icon-128.png"/>
-  <SupportUrl DefaultValue="https://phishing-url-detector-je19.onrender.com"/>
+  <SupportUrl DefaultValue="https://phishing-url-detector-6462.onrender.com"/>
   <AppDomains>
     <AppDomain>https://jiyaS95.github.io</AppDomain>
-    <AppDomain>https://phishing-url-detector-je19.onrender.com</AppDomain>
+    <AppDomain>https://phishing-url-detector-6462.onrender.com</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>
