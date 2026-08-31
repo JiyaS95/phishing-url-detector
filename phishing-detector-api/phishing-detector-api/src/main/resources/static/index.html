@@ -901,8 +901,11 @@
         token = null; currentUser = null;
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        document.getElementById("loginEmail").value = "";
+        document.getElementById("loginPassword").value = "";
         updateNav();
         document.getElementById("historyContent").innerHTML = '<div class="login-prompt"><a onclick="openModal(\'login\')">Login</a> or <a onclick="openModal(\'register\')">sign up</a> to save your scan history.</div>';
+        showPage('home');
     }
 
     async function loadProfile() {
